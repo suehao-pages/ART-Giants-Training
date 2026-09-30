@@ -4,6 +4,6 @@
   The service_role key must never be used in this browser file.
 */
 window.AG_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: ""
+  supabaseUrl: "https://jpkygopjdhvgdsrqewvz.supabase.co",
+  supabaseAnonKey: "sb_publishable_j2rhndBPh-pfp9L6VcNY1A_vPBzDn97"
 };
