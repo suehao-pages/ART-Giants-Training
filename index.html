@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1220">
+  <title>ART Giants U10-3</title>
+  <style>
+    :root{--ink:#101828;--muted:#667085;--line:#e7e9ee;--paper:#f5f6f8;--card:#fff;--navy:#0b1220;--blue:#1746e0;--red:#e5252a;--green:#0f9f6e;--amber:#c47b12;--shadow:0 18px 50px rgba(16,24,40,.11);--radius:24px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#dfe3e8;color:var(--ink);font:15px/1.45 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+    .app{width:min(100%,480px);min-height:100dvh;margin:auto;background:var(--paper);position:relative;overflow:hidden;box-shadow:var(--shadow)}
+    .top{padding:20px 20px 54px;background:linear-gradient(145deg,#080d17 0%,#142848 72%,#153c71 100%);color:#fff;position:relative;overflow:hidden}
+    .top:after{content:"";position:absolute;width:220px;height:220px;border:48px solid rgba(255,255,255,.045);border-radius:50%;right:-90px;top:-88px}
+    .brandrow,.row,.between{display:flex;align-items:center}.between{justify-content:space-between}.brandmark{display:flex;gap:10px;align-items:center}.ball{width:38px;height:38px;border-radius:50%;background:var(--red);display:grid;place-items:center;font-size:20px;box-shadow:0 5px 18px rgba(229,37,42,.35)}
+    .brand{font-weight:850;letter-spacing:.03em}.team{font-size:12px;color:#c7d3e4;margin-top:1px}.avatar{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:#dbe5f1;display:grid;place-items:center;color:#17233a;font-weight:800;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}
+    .eyebrow{margin-top:24px;text-transform:uppercase;font-size:11px;letter-spacing:.13em;color:#91a7c3;font-weight:800}.top h1{font-size:30px;line-height:1.05;margin:7px 0 9px;letter-spacing:-.04em}.topsub{color:#c4cfdd;font-size:13px}
+    .status-card{margin:-32px 16px 16px;background:var(--card);border-radius:var(--radius);position:relative;z-index:2;padding:18px;box-shadow:0 14px 34px rgba(16,24,40,.12)}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800}.pill.ok{background:#eaf8f2;color:#087b55}.pill.wait{background:#fff3dc;color:#94600e}.pill.off{background:#fdebec;color:#b31a21}.dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+    .next-title{font-size:21px;font-weight:850;margin:12px 0 3px;letter-spacing:-.025em}.meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:13px}.meta b{color:var(--ink)}.primary,.secondary,.ghost,.danger{border:0;border-radius:14px;padding:12px 15px;font-weight:800}.primary{background:var(--blue);color:#fff;box-shadow:0 7px 16px rgba(23,70,224,.2)}.secondary{background:#eef2ff;color:#173fae}.ghost{background:#f0f2f5;color:#344054}.danger{background:#feecee;color:#b81f26}.full{width:100%}.status-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:17px}
+    main{padding:0 16px 98px}.screen{display:none}.screen.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:end;margin:22px 2px 12px}.section-head h2{font-size:20px;margin:0;letter-spacing:-.025em}.linkbtn{background:none;border:0;color:var(--blue);font-weight:800;font-size:13px;padding:4px}
+    .datebar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:#fff;border-radius:19px;padding:9px;box-shadow:0 7px 25px rgba(16,24,40,.06)}.day{text-align:center;border:0;background:transparent;padding:7px 2px;border-radius:12px;color:#7a8190}.day span{display:block;font-size:10px;text-transform:uppercase}.day b{display:block;font-size:14px;margin-top:4px}.day.active{background:var(--navy);color:#fff}
+    .session{background:#fff;border-radius:20px;padding:16px;margin:10px 0;border:1px solid #eef0f3;box-shadow:0 7px 22px rgba(16,24,40,.045)}.session-top{display:flex;justify-content:space-between;align-items:flex-start}.session-date{font-weight:850;font-size:17px}.session-time{font-size:12px;color:var(--muted);margin-top:2px}.venue{display:flex;gap:11px;align-items:center;margin:15px 0}.venue-icon{width:38px;height:38px;background:#fff0f0;color:var(--red);border-radius:12px;display:grid;place-items:center}.venue-name{font-weight:800}.venue-address{color:var(--muted);font-size:12px}.session-foot{border-top:1px solid var(--line);padding-top:12px;display:flex;align-items:center;justify-content:space-between}.faces{display:flex}.face{width:27px;height:27px;border:2px solid #fff;border-radius:50%;margin-left:-7px;background:#dce5f3;display:grid;place-items:center;font-size:10px;font-weight:800}.face:first-child{margin:0}.attend{font-size:12px;color:var(--muted)}
+    .game{background:#fff;border-radius:22px;padding:18px;margin:10px 0}.game-date{color:var(--red);font-weight:850;font-size:12px;text-transform:uppercase;letter-spacing:.07em}.teams{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;text-align:center;margin:18px 0}.crest{width:54px;height:54px;border-radius:17px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:900;margin:auto auto 7px}.crest.away{background:#e8ebef;color:#263244}.vs{font-size:12px;font-weight:900;color:#98a2b3}.teamname{font-size:12px;font-weight:800}.empty{text-align:center;background:#fff;border:1px dashed #ccd1da;border-radius:22px;padding:30px 18px;color:var(--muted)}
+    .signup-hero{background:linear-gradient(145deg,#1647df,#0c2c90);color:#fff;border-radius:24px;padding:22px;margin-top:20px}.signup-hero h2{font-size:25px;margin:7px 0}.signup-hero p{color:#dce5ff;margin:0}.choice{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:19px}.choice button{padding:14px;border-radius:15px;border:1px solid rgba(255,255,255,.25);font-weight:850}.yes{background:#fff;color:#1237a7}.no{background:rgba(255,255,255,.08);color:#fff}.signup-list{background:#fff;border-radius:22px;padding:16px;margin-top:12px}.person{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line)}.person:last-child{border:0}.person .avatar{border:0;width:36px;height:36px}.person-info{flex:1}.person-name{font-weight:800}.person-sub{font-size:12px;color:var(--muted)}
+    .mapcard{height:190px;border-radius:24px;margin-top:20px;background:linear-gradient(45deg,#dce8dc,#edf1e9);position:relative;overflow:hidden;border:1px solid #d7ddd5}.road{position:absolute;width:540px;height:46px;background:#fff;transform:rotate(-22deg);left:-50px;top:65px;border:1px solid #d8ded7}.road2{transform:rotate(65deg);left:-20px;top:72px}.pin{position:absolute;left:53%;top:42%;width:42px;height:42px;margin:-21px;background:var(--red);color:#fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);display:grid;place-items:center;box-shadow:0 8px 18px rgba(229,37,42,.3)}.pin span{transform:rotate(45deg);font-weight:900}.location{background:#fff;border-radius:19px;padding:15px;margin:10px 0;display:flex;gap:12px;align-items:center}.location-main{flex:1}.location-title{font-weight:850}.location-sub{font-size:12px;color:var(--muted)}.mapgo{width:38px;height:38px;border-radius:12px;border:0;background:#edf2ff;color:var(--blue);font-weight:900}
+    .profile-card{background:#fff;border-radius:24px;padding:20px;margin-top:20px;text-align:center}.bigavatar{width:82px;height:82px;border-radius:50%;background:#dce5f3;display:grid;place-items:center;margin:auto;font-size:26px;font-weight:900;overflow:hidden}.bigavatar img{width:100%;height:100%;object-fit:cover}.profile-card h2{margin:10px 0 2px}.role{color:var(--muted);font-size:13px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:17px}.stat{background:#f5f6f8;border-radius:14px;padding:12px 4px}.stat b{display:block;font-size:17px}.stat span{font-size:10px;color:var(--muted);text-transform:uppercase}.settings{background:#fff;border-radius:21px;margin-top:12px;overflow:hidden}.setting{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--line)}.setting:last-child{border:0}.setting-icon{width:36px;height:36px;border-radius:11px;background:#eef1f5;display:grid;place-items:center}.setting-main{flex:1}.setting-title{font-weight:800}.setting-sub{font-size:12px;color:var(--muted)}
+    nav{position:fixed;z-index:20;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,480px);height:82px;padding:8px 14px max(8px,env(safe-area-inset-bottom));background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid #e7e9ee;display:grid;grid-template-columns:repeat(5,1fr)}.navitem{border:0;background:transparent;color:#89909d;display:grid;place-items:center;font-size:9px;font-weight:800;gap:1px}.navitem svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}.navitem.active{color:var(--blue)}.navplus{width:50px;height:50px;border-radius:17px;background:var(--red);color:#fff!important;margin-top:-22px;box-shadow:0 9px 20px rgba(229,37,42,.3)}.navplus svg{width:25px;height:25px}
+    .overlay{position:fixed;z-index:50;inset:0;background:rgba(5,11,20,.58);display:grid;place-items:end center;padding:18px}.modal{width:min(100%,450px);max-height:88dvh;overflow:auto;background:#fff;border-radius:26px;padding:21px;box-shadow:var(--shadow)}.modal h2{margin:0 0 4px}.modal p{color:var(--muted);margin:0 0 18px}.field{margin:13px 0}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #d7dbe2;border-radius:13px;padding:12px 13px;background:#fff;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,70,224,.1)}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modal-actions{display:flex;gap:9px;margin-top:18px}.modal-actions>*{flex:1}
+    .login{align-items:center;background:linear-gradient(145deg,#080d17,#173864)}.loginbox{width:min(100%,430px);border-radius:30px;padding:25px}.loginlogo{text-align:center;margin-bottom:24px}.loginlogo .ball{margin:auto;width:58px;height:58px;font-size:27px}.loginlogo h1{margin:12px 0 2px}.loginlogo p{margin:0}.demo{border-top:1px solid var(--line);margin-top:19px;padding-top:17px}.demo-title{text-align:center;font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.09em}.demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.demo-grid button{border:1px solid #dfe3e9;background:#f7f8fa;border-radius:12px;padding:9px 3px;font-size:11px;font-weight:800}.toast{position:fixed;z-index:80;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);background:#111827;color:#fff;border-radius:13px;padding:11px 15px;opacity:0;pointer-events:none;transition:.25s;white-space:nowrap;max-width:90%;overflow:hidden;text-overflow:ellipsis}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .admin-only,.coach-only{display:none}.role-admin .admin-only,.role-admin .coach-only,.role-trainer .coach-only{display:flex}.account-badge{font-size:10px;font-weight:900;text-transform:uppercase;padding:4px 7px;border-radius:8px;background:#edf2ff;color:var(--blue)}
+    @media(min-width:700px){body{padding:24px}.app{min-height:calc(100dvh - 48px);border-radius:32px}nav{bottom:24px;border-radius:0 0 32px 32px}.overlay{place-items:center}.modal{border-radius:28px}}
+  </style>
+</head>
+<body>
+  <div class="app role-parent" id="app">
+    <header class="top">
+      <div class="between"><div class="brandmark"><div class="ball">🏀</div><div><div class="brand">ART GIANTS</div><div class="team">U10-3 · Saison 2026/27</div></div></div><button class="avatar" id="headerAvatar" aria-label="Profil">LM</button></div>
+      <div class="eyebrow">Guten Tag, <span id="greetingName">Leonie</span></div>
+      <h1>Bereit fürs<br>nächste Training?</h1>
+      <div class="topsub">Alles Wichtige für das Team an einem Ort.</div>
+    </header>
+
+    <section class="status-card" id="nextCard">
+      <div class="between"><span class="pill wait" id="nextStatus"><span class="dot"></span> Bestätigung offen</span><span class="pill" style="background:#f2f4f7">U10-3</span></div>
+      <div class="next-title" id="nextTitle">Mittwoch, 30. September</div>
+      <div class="meta"><span>🕓 <b id="nextTime">16:30–18:00</b></span><span>📍 <b id="nextVenue">CeC 3</b></span></div>
+      <div class="status-actions">
+        <button class="primary" id="quickSignup">Teilnehmen</button>
+        <button class="secondary" data-nav="map">Route ansehen</button>
+      </div>
+      <div class="status-actions coach-only">
+        <button class="primary" id="confirmTraining">Training bestätigen</button>
+        <button class="ghost" id="editTraining">Bearbeiten</button>
+      </div>
+    </section>
+
+    <main>
+      <section class="screen active" id="screen-training">
+        <div class="section-head"><h2>Trainingsplan</h2><button class="linkbtn coach-only" id="batchEdit">Serie bearbeiten</button></div>
+        <div class="datebar" id="datebar"></div>
+        <div id="sessionList"></div>
+      </section>
+
+      <section class="screen" id="screen-games">
+        <div class="section-head"><h2>Spielplan</h2><button class="linkbtn coach-only">+ Spiel</button></div>
+        <article class="game"><div class="game-date">Samstag · 10. Oktober · 11:00</div><div class="teams"><div><div class="crest">AG</div><div class="teamname">ART Giants<br>U10-3</div></div><div class="vs">VS</div><div><div class="crest away">TG</div><div class="teamname">TG Neuss<br>U10</div></div></div><div class="between"><span class="venue-address">📍 CeC · Feld 1</span><button class="secondary">Details</button></div></article>
+        <article class="game"><div class="game-date">Sonntag · 25. Oktober · 13:00</div><div class="teams"><div><div class="crest away">DB</div><div class="teamname">Düsseldorf<br>Baskets</div></div><div class="vs">VS</div><div><div class="crest">AG</div><div class="teamname">ART Giants<br>U10-3</div></div></div><div class="between"><span class="venue-address">📍 Auswärtsspiel</span><button class="secondary">Details</button></div></article>
+      </section>
+
+      <section class="screen" id="screen-signup">
+        <div class="signup-hero"><span class="pill" style="background:rgba(255,255,255,.15);color:#fff">Nächstes Training</span><h2 id="signupDate">Mi, 30. September</h2><p id="signupMeta">16:30–18:00 · CeC 3</p><div class="choice"><button class="yes" id="yesBtn">✓ Ich bin dabei</button><button class="no" id="noBtn">Absagen</button></div></div>
+        <div class="section-head"><h2>Teilnahmen</h2><span class="attend" id="attendanceCount">8 Zusagen</span></div>
+        <div class="signup-list" id="peopleList"></div>
+      </section>
+
+      <section class="screen" id="screen-map">
+        <div class="section-head"><h2>Hallen & Anfahrt</h2><button class="linkbtn coach-only" id="manageVenues">Verwalten</button></div>
+        <div class="mapcard"><div class="road"></div><div class="road road2"></div><div class="pin"><span>AG</span></div></div>
+        <div id="venueList"></div>
+      </section>
+
+      <section class="screen" id="screen-profile">
+        <div class="profile-card"><div class="bigavatar" id="profileAvatar">LM</div><h2 id="profileName">Lina Muster</h2><div class="role" id="profileRole">Spielerin · U10-3</div><div class="stats"><div class="stat"><b id="heightValue">138</b><span>Größe cm</span></div><div class="stat"><b id="weightValue">31</b><span>Gewicht kg</span></div><div class="stat"><b id="handValue">Rechts</b><span>Wurfhand</span></div></div></div>
+        <div class="settings">
+          <button class="setting full" id="editProfile"><span class="setting-icon">👤</span><span class="setting-main" style="text-align:left"><span class="setting-title">Spielerprofil</span><span class="setting-sub">Foto und persönliche Daten</span></span><span>›</span></button>
+          <button class="setting full coach-only" id="teamPlayers"><span class="setting-icon">🏀</span><span class="setting-main" style="text-align:left"><span class="setting-title">Team & Spieler</span><span class="setting-sub">Sensible Daten nur für Trainer/Admin</span></span><span>›</span></button>
+          <button class="setting full admin-only" id="accounts"><span class="setting-icon">🔐</span><span class="setting-main" style="text-align:left"><span class="setting-title">Konten & Rechte</span><span class="setting-sub">15 Plätze · Rollen verwalten</span></span><span>›</span></button>
+          <button class="setting full" id="privacy"><span class="setting-icon">🛡️</span><span class="setting-main" style="text-align:left"><span class="setting-title">Datenschutz</span><span class="setting-sub">Sichtbarkeit und Einwilligungen</span></span><span>›</span></button>
+          <button class="setting full" id="logout"><span class="setting-icon">↪</span><span class="setting-main" style="text-align:left"><span class="setting-title">Abmelden</span><span class="setting-sub">Konto sicher verlassen</span></span><span>›</span></button>
+        </div>
+      </section>
+    </main>
+
+    <nav aria-label="Hauptnavigation">
+      <button class="navitem active" data-screen="training"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 3v4m8-4v4M4 10h16"/></svg><span>Training</span></button>
+      <button class="navitem" data-screen="games"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4H4v3c0 2 2 4 4 4m9-7h3v3c0 2-2 4-4 4M8 3h8v6a4 4 0 0 1-8 0z"/></svg><span>Spiele</span></button>
+      <button class="navitem navplus" data-screen="signup" aria-label="Anmelden"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Anmelden</span></button>
+      <button class="navitem" data-screen="map"><svg viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3zM9 3v15m6-12v15"/></svg><span>Hallen</span></button>
+      <button class="navitem" data-screen="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span>Profil</span></button>
+    </nav>
+  </div>
+
+  <div class="overlay login" id="loginOverlay">
+    <div class="modal loginbox"><div class="loginlogo"><div class="ball">🏀</div><h1>ART Giants U10-3</h1><p>Trainings, Spiele und Team – gemeinsam organisiert.</p></div>
+      <form id="loginForm"><div class="field"><label>E-Mail</label><input type="email" id="email" placeholder="name@beispiel.de" required></div><div class="field"><label>Passwort</label><input type="password" id="password" placeholder="••••••••" minlength="6" required></div><button class="primary full" type="submit">Anmelden</button></form>
+      <div class="demo"><div class="demo-title">Vorschau ohne Supabase</div><div class="demo-grid"><button data-demo="parent">Eltern / Spieler</button><button data-demo="trainer">Trainer</button><button data-demo="admin">Admin</button></div></div>
+    </div>
+  </div>
+  <div class="overlay hidden" id="modalOverlay"><div class="modal" id="modal"></div></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./config.js"></script>
+  <script>
+    /* Public browser credentials only. Never place the service_role key here. */
+    const SUPABASE_URL = window.AG_CONFIG?.supabaseUrl || "";
+    const SUPABASE_ANON_KEY = window.AG_CONFIG?.supabaseAnonKey || "";
+    const db = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+    const APP_STATE = {
+      role: localStorage.getItem("ag-role") || "parent",
+      joined: localStorage.getItem("ag-joined") === "true",
+      confirmed: localStorage.getItem("ag-confirmed") === "true",
+      profile: JSON.parse(localStorage.getItem("ag-profile") || '{"name":"Lina Muster","height":138,"weight":31,"hand":"Rechts","age":9}'),
+      sessions: [
+        {id:1,date:"2026-09-30",day:"Mittwoch",time:"16:30–18:00",venue:"CeC 3",status:"open",count:8},
+        {id:2,date:"2026-10-02",day:"Freitag",time:"16:30–18:00",venue:"CeC 1",status:"open",count:7},
+        {id:3,date:"2026-10-07",day:"Mittwoch",time:"16:30–18:00",venue:"CeC 2",status:"open",count:5},
+        {id:4,date:"2026-10-09",day:"Freitag",time:"16:30–18:00",venue:"CeC 3",status:"open",count:4},
+        {id:5,date:"2026-10-14",day:"Mittwoch",time:"16:30–18:00",venue:"CeC 2",status:"open",count:2}
+      ],
+      venues: [
+        {code:"CeC 1",name:"Comenius-Gymnasium · Feld 1",address:"Lütticher Straße 34, 40547 Düsseldorf"},
+        {code:"CeC 2",name:"Comenius-Gymnasium · Feld 2",address:"Lütticher Straße 34, 40547 Düsseldorf"},
+        {code:"CeC 3",name:"Comenius-Gymnasium · Feld 3",address:"Lütticher Straße 34, 40547 Düsseldorf"},
+        {code:"A3",name:"A3 · Adresse ergänzen",address:"Düsseldorf"},
+        {code:"KC",name:"KC · Adresse ergänzen",address:"Düsseldorf"},
+        {code:"Leibniz",name:"Leibniz · Adresse ergänzen",address:"Düsseldorf"},
+        {code:"WvS",name:"WvS · Adresse ergänzen",address:"Düsseldorf"},
+        {code:"KFS",name:"KFS · Adresse ergänzen",address:"Düsseldorf"}
+      ]
+    };
+    const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+    const deDate=d=>new Intl.DateTimeFormat("de-DE",{weekday:"long",day:"numeric",month:"long"}).format(new Date(d+"T12:00:00"));
+    const shortDate=d=>new Intl.DateTimeFormat("de-DE",{weekday:"short",day:"numeric",month:"long"}).format(new Date(d+"T12:00:00"));
+    function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}
+    function nav(name){$$('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));$$('.navitem').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));scrollTo({top:0,behavior:'smooth'})}
+    function setRole(role, displayName){APP_STATE.role=role;localStorage.setItem("ag-role",role);const app=$("#app");app.className=`app role-${role}`;const labels={player:[displayName||"Spieler/in","Spieler/in · U10-3"],parent:[displayName||"Leonie","Elternkonto · U10-3"],trainer:[displayName||"Dalia","Trainer/in · U10-3"],admin:[displayName||"Admin","Administration"]};const label=labels[role]||labels.parent;$("#greetingName").textContent=label[0].split(' ')[0];$("#profileRole").textContent=label[1];$("#headerAvatar").textContent=label[0].split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();$("#loginOverlay").classList.add('hidden');render();toast(`Angemeldet als ${label[1]}`)}
+    function render(){
+      const s=APP_STATE.sessions[0], status=APP_STATE.confirmed?'confirmed':s.status;
+      $("#nextTitle").textContent=deDate(s.date);$("#nextTime").textContent=s.time;$("#nextVenue").textContent=s.venue;$("#signupDate").textContent=shortDate(s.date);$("#signupMeta").textContent=`${s.time} · ${s.venue}`;
+      const st=$("#nextStatus");st.className=`pill ${status==='confirmed'?'ok':'wait'}`;st.innerHTML=`<span class="dot"></span>${status==='confirmed'?'Vom Trainer bestätigt':'Bestätigung offen'}`;
+      $("#quickSignup").textContent=APP_STATE.joined?'Teilnahme zugesagt ✓':'Teilnehmen';$("#yesBtn").textContent=APP_STATE.joined?'✓ Zugesagt':'✓ Ich bin dabei';
+      const week=[['Mo','28'],['Di','29'],['Mi','30'],['Do','1'],['Fr','2'],['Sa','3'],['So','4']];$("#datebar").innerHTML=week.map((d,i)=>`<button class="day ${i===2?'active':''}"><span>${d[0]}</span><b>${d[1]}</b></button>`).join('');
+      $("#sessionList").innerHTML=APP_STATE.sessions.map((x,i)=>`<article class="session"><div class="session-top"><div><div class="session-date">${deDate(x.date)}</div><div class="session-time">${x.time} · 90 Minuten</div></div><span class="pill ${(i===0&&APP_STATE.confirmed)?'ok':'wait'}"><span class="dot"></span>${(i===0&&APP_STATE.confirmed)?'Bestätigt':'Offen'}</span></div><div class="venue"><div class="venue-icon">⌖</div><div><div class="venue-name">${x.venue}</div><div class="venue-address">Comenius-Gymnasium · Feld ${x.venue.split(' ')[1]||''}</div></div></div><div class="session-foot"><div class="faces"><span class="face">LM</span><span class="face">NF</span><span class="face">+${x.count-2}</span></div><span class="attend">${x.count+(i===0&&APP_STATE.joined?1:0)} Zusagen</span><button class="linkbtn" onclick="selectSession(${x.id})">Details →</button></div></article>`).join('');
+      const people=[['Noah F.','Zugesagt'],['Mila S.','Zugesagt'],['Elias K.','Zugesagt'],['Sara M.','Zugesagt'],['Ben L.','Zugesagt'],['Emma R.','Zugesagt']];if(APP_STATE.joined)people.unshift([APP_STATE.profile.name,'Zugesagt']);$("#peopleList").innerHTML=people.map((p,i)=>`<div class="person"><div class="avatar">${p[0].split(' ').map(v=>v[0]).join('')}</div><div class="person-info"><div class="person-name">${p[0]}</div><div class="person-sub">Spieler/in · U10-3</div></div><span class="pill ok"><span class="dot"></span>${p[1]}</span></div>`).join('');$("#attendanceCount").textContent=`${APP_STATE.sessions[0].count+(APP_STATE.joined?1:0)} Zusagen`;
+      $("#venueList").innerHTML=APP_STATE.venues.map(v=>`<div class="location"><div class="venue-icon">⌖</div><div class="location-main"><div class="location-title">${v.code}</div><div class="location-sub">${v.name}<br>${v.address}</div></div><button class="mapgo" onclick="openMap('${encodeURIComponent(v.address)}')">↗</button></div>`).join('');
+      $("#profileName").textContent=APP_STATE.profile.name;$("#heightValue").textContent=APP_STATE.profile.height;$("#weightValue").textContent=APP_STATE.profile.weight;$("#handValue").textContent=APP_STATE.profile.hand;
+    }
+    function openMap(q){open(`https://www.google.com/maps/search/?api=1&query=${q}`,'_blank','noopener')}
+    function selectSession(id){const s=APP_STATE.sessions.find(x=>x.id===id);showModal(`<h2>${deDate(s.date)}</h2><p>${s.time} · ${s.venue}</p><div class="field"><label>Status</label><div class="pill wait"><span class="dot"></span> Bestätigung offen</div></div><div class="field"><label>Trainer</label><input value="Dalia Hamdoun" disabled></div><div class="field"><label>Team</label><input value="U10-3 · Kreisliga" disabled></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Schließen</button><button class="primary" onclick="join();closeModal()">Teilnehmen</button></div>`)}
+    function join(){APP_STATE.joined=true;localStorage.setItem('ag-joined','true');render();toast('Teilnahme wurde gespeichert')}
+    function showModal(html){$("#modal").innerHTML=html;$("#modalOverlay").classList.remove('hidden')};function closeModal(){$("#modalOverlay").classList.add('hidden')}
+    function trainingEditor(batch=false){const s=APP_STATE.sessions[0];showModal(`<h2>${batch?'Trainingsserie bearbeiten':'Training bearbeiten'}</h2><p>${batch?'Änderung auf mehrere Termine anwenden.':'Zeit, Halle und Status anpassen.'}</p>${batch?'<div class="field"><label>Gültig ab</label><input id="editFrom" type="date" value="2026-10-06"></div>':''}<div class="formgrid"><div class="field"><label>Beginn</label><input id="editStart" type="time" value="16:30"></div><div class="field"><label>Ende</label><input id="editEnd" type="time" value="18:00"></div></div><div class="field"><label>Halle / Feld</label><select id="editVenue">${APP_STATE.venues.map(v=>`<option ${v.code===s.venue?'selected':''}>${v.code}</option>`).join('')}</select></div>${batch?'<div class="field"><label>Termine</label><select id="editDays"><option>Mittwoch und Freitag</option><option>Nur Mittwoch</option><option>Nur Freitag</option></select></div>':''}<div class="field"><label>Hinweis ans Team</label><textarea id="editNote" rows="3" placeholder="z. B. Beginn heute erst um 17:00 Uhr"></textarea></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="saveTraining(${batch})">Speichern</button></div>`)}
+    function saveTraining(batch){const val=`${$('#editStart').value}–${$('#editEnd').value}`;const venue=$('#editVenue').value;if(batch){APP_STATE.sessions.filter(x=>x.date>='2026-10-06').forEach(x=>{x.time=val;if(x.day==='Mittwoch')x.venue=venue})}else{APP_STATE.sessions[0].time=val;APP_STATE.sessions[0].venue=venue}render();closeModal();toast(batch?'Trainingsserie aktualisiert':'Training aktualisiert')}
+    $$('.navitem').forEach(b=>b.onclick=()=>nav(b.dataset.screen));$$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));$$('[data-demo]').forEach(b=>b.onclick=()=>setRole(b.dataset.demo));
+    $('#loginForm').onsubmit=async e=>{
+      e.preventDefault();
+      if(!db){toast('Supabase noch nicht konfiguriert – bitte Demo wählen');return}
+      const submit=e.currentTarget.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent='Anmeldung…';
+      const {data,error}=await db.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});
+      if(error){toast(error.message==='Invalid login credentials'?'E-Mail oder Passwort ist nicht korrekt':error.message);submit.disabled=false;submit.textContent='Anmelden';return}
+      const {data:profile,error:profileError}=await db.from('profiles').select('display_name, role').eq('id',data.user.id).single();
+      if(profileError){await db.auth.signOut();toast('Für dieses Konto fehlt noch ein Profil');submit.disabled=false;submit.textContent='Anmelden';return}
+      setRole(profile.role,profile.display_name);submit.disabled=false;submit.textContent='Anmelden';
+    };
+    $('#quickSignup').onclick=()=>{join();nav('signup')};$('#yesBtn').onclick=join;$('#noBtn').onclick=()=>{APP_STATE.joined=false;localStorage.setItem('ag-joined','false');render();toast('Teilnahme wurde abgesagt')};
+    $('#confirmTraining').onclick=()=>{APP_STATE.confirmed=true;localStorage.setItem('ag-confirmed','true');render();toast('Training bestätigt – Team wurde informiert')};$('#editTraining').onclick=()=>trainingEditor(false);$('#batchEdit').onclick=()=>trainingEditor(true);
+    $('#headerAvatar').onclick=()=>nav('profile');$('#modalOverlay').onclick=e=>{if(e.target.id==='modalOverlay')closeModal()};
+    $('#editProfile').onclick=()=>showModal(`<h2>Spielerprofil bearbeiten</h2><p>Gesundheits- und Körperdaten sehen nur Trainer und Admin.</p><div class="field"><label>Profilfoto</label><input id="avatarFile" type="file" accept="image/*"></div><div class="field"><label>Name</label><input id="pName" value="${APP_STATE.profile.name}"></div><div class="formgrid"><div class="field"><label>Alter</label><input id="pAge" type="number" value="${APP_STATE.profile.age}"></div><div class="field"><label>Wurfhand</label><select id="pHand"><option>Rechts</option><option>Links</option><option>Beide</option></select></div><div class="field"><label>Größe (cm)</label><input id="pHeight" type="number" value="${APP_STATE.profile.height}"></div><div class="field"><label>Gewicht (kg)</label><input id="pWeight" type="number" value="${APP_STATE.profile.weight}"></div></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="saveProfile()">Speichern</button></div>`);
+    function saveProfile(){APP_STATE.profile={name:$('#pName').value,age:+$('#pAge').value,height:+$('#pHeight').value,weight:+$('#pWeight').value,hand:$('#pHand').value};localStorage.setItem('ag-profile',JSON.stringify(APP_STATE.profile));const f=$('#avatarFile').files[0];if(f){const r=new FileReader();r.onload=()=>{$('#profileAvatar').innerHTML=`<img alt="Profilfoto" src="${r.result}">`;$('#headerAvatar').innerHTML=`<img alt="Profilfoto" src="${r.result}">`};r.readAsDataURL(f)}render();closeModal();toast('Profil gespeichert')}
+    $('#accounts').onclick=()=>showModal(`<h2>Konten & Rechte</h2><p>12 von 15 vorgesehenen Plätzen belegt.</p>${[['Dalia Hamdoun','Trainer'],['Trainer 2','Trainer'],['Leonie Muster','Eltern'],['Noah Familie','Eltern'],['Mila Familie','Eltern']].map(a=>`<div class="person"><div class="avatar">${a[0].split(' ').map(x=>x[0]).join('')}</div><div class="person-info"><div class="person-name">${a[0]}</div><div class="person-sub">Einladung aktiv</div></div><span class="account-badge">${a[1]}</span></div>`).join('')}<div class="modal-actions"><button class="ghost" onclick="closeModal()">Schließen</button><button class="primary" onclick="toast('Einladungsfunktion für Supabase vorbereitet')">+ Einladen</button></div>`);
+    $('#teamPlayers').onclick=()=>showModal(`<h2>Team & Spieler</h2><p>Private Spielerinformationen sind nur in dieser Traineransicht sichtbar.</p>${[['Lina Muster','9 J. · 138 cm · 31 kg'],['Noah Fischer','9 J. · Daten vollständig'],['Mila Schmitz','8 J. · Profil ergänzen']].map(a=>`<div class="person"><div class="avatar">${a[0].split(' ').map(x=>x[0]).join('')}</div><div class="person-info"><div class="person-name">${a[0]}</div><div class="person-sub">${a[1]}</div></div><span>›</span></div>`).join('')}<button class="ghost full" onclick="closeModal()">Schließen</button>`);
+    $('#manageVenues').onclick=()=>showModal(`<h2>Hallen verwalten</h2><p>Bitte ergänze die noch offenen Adressen für A3, KC, Leibniz, WvS und KFS.</p>${APP_STATE.venues.slice(3).map(v=>`<div class="field"><label>${v.code}</label><input placeholder="Vollständige Adresse"></div>`).join('')}<div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="closeModal();toast('Adressen gespeichert')">Speichern</button></div>`);
+    $('#privacy').onclick=()=>showModal(`<h2>Datenschutz</h2><p>Spieler sehen untereinander nur Profilfoto, Vorname und Alter. Größe, Gewicht, Wurfhand und Kontaktdaten sind auf Trainer und Admin beschränkt.</p><button class="ghost full" onclick="closeModal()">Verstanden</button>`);
+    $('#logout').onclick=async()=>{if(db)await db.auth.signOut();$('#loginOverlay').classList.remove('hidden');nav('training')};
+    async function restoreSession(){if(!db)return;const {data}=await db.auth.getSession();if(!data.session)return;const {data:profile}=await db.from('profiles').select('display_name, role').eq('id',data.session.user.id).single();if(profile)setRole(profile.role,profile.display_name)}
+    render();restoreSession();
+  </script>
+</body>
+</html>
