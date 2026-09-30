@@ -84,6 +84,7 @@
         <div class="profile-card"><div class="bigavatar" id="profileAvatar">LM</div><h2 id="profileName">Lina Muster</h2><div class="role" id="profileRole">Spielerin · U10-3</div><div class="stats"><div class="stat"><b id="heightValue">138</b><span>Größe cm</span></div><div class="stat"><b id="weightValue">31</b><span>Gewicht kg</span></div><div class="stat"><b id="handValue">Rechts</b><span>Wurfhand</span></div></div></div>
         <div class="settings">
           <button class="setting full" id="editProfile"><span class="setting-icon">👤</span><span class="setting-main" style="text-align:left"><span class="setting-title">Spielerprofil</span><span class="setting-sub">Foto und persönliche Daten</span></span><span>›</span></button>
+          <button class="setting full" id="changePassword"><span class="setting-icon">🔑</span><span class="setting-main" style="text-align:left"><span class="setting-title">Passwort ändern</span><span class="setting-sub">Aktuelles Passwort sicher aktualisieren</span></span><span>›</span></button>
           <button class="setting full coach-only" id="teamPlayers"><span class="setting-icon">🏀</span><span class="setting-main" style="text-align:left"><span class="setting-title">Team & Spieler</span><span class="setting-sub">Sensible Daten nur für Trainer/Admin</span></span><span>›</span></button>
           <button class="setting full admin-only" id="accounts"><span class="setting-icon">🔐</span><span class="setting-main" style="text-align:left"><span class="setting-title">Konten & Rechte</span><span class="setting-sub">15 Plätze · Rollen verwalten</span></span><span>›</span></button>
           <button class="setting full" id="privacy"><span class="setting-icon">🛡️</span><span class="setting-main" style="text-align:left"><span class="setting-title">Datenschutz</span><span class="setting-sub">Sichtbarkeit und Einwilligungen</span></span><span>›</span></button>
@@ -119,6 +120,8 @@
     const db = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
       ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
       : null;
+    const AUTH_LINK_TYPE = new URLSearchParams(location.hash.slice(1)).get('type')
+      || new URLSearchParams(location.search).get('type');
     const APP_STATE = {
       role: localStorage.getItem("ag-role") || "parent",
       joined: localStorage.getItem("ag-joined") === "true",
@@ -162,10 +165,12 @@
     function openMap(q){open(`https://www.google.com/maps/search/?api=1&query=${q}`,'_blank','noopener')}
     function selectSession(id){const s=APP_STATE.sessions.find(x=>x.id===id);showModal(`<h2>${deDate(s.date)}</h2><p>${s.time} · ${s.venue}</p><div class="field"><label>Status</label><div class="pill wait"><span class="dot"></span> Bestätigung offen</div></div><div class="field"><label>Trainer</label><input value="Dalia Hamdoun" disabled></div><div class="field"><label>Team</label><input value="U10-3 · Kreisliga" disabled></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Schließen</button><button class="primary" onclick="join();closeModal()">Teilnehmen</button></div>`)}
     function join(){APP_STATE.joined=true;localStorage.setItem('ag-joined','true');render();toast('Teilnahme wurde gespeichert')}
-    function showModal(html){$("#modal").innerHTML=html;$("#modalOverlay").classList.remove('hidden')};function closeModal(){$("#modalOverlay").classList.add('hidden')}
+    function showModal(html,locked=false){$("#modal").innerHTML=html;$("#modalOverlay").dataset.locked=locked?'true':'false';$("#modalOverlay").classList.remove('hidden')}
+    function closeModal(force=false){if($("#modalOverlay").dataset.locked==='true'&&!force)return;$("#modalOverlay").classList.add('hidden');$("#modalOverlay").dataset.locked='false'}
     function trainingEditor(batch=false){const s=APP_STATE.sessions[0];showModal(`<h2>${batch?'Trainingsserie bearbeiten':'Training bearbeiten'}</h2><p>${batch?'Änderung auf mehrere Termine anwenden.':'Zeit, Halle und Status anpassen.'}</p>${batch?'<div class="field"><label>Gültig ab</label><input id="editFrom" type="date" value="2026-10-06"></div>':''}<div class="formgrid"><div class="field"><label>Beginn</label><input id="editStart" type="time" value="16:30"></div><div class="field"><label>Ende</label><input id="editEnd" type="time" value="18:00"></div></div><div class="field"><label>Halle / Feld</label><select id="editVenue">${APP_STATE.venues.map(v=>`<option ${v.code===s.venue?'selected':''}>${v.code}</option>`).join('')}</select></div>${batch?'<div class="field"><label>Termine</label><select id="editDays"><option>Mittwoch und Freitag</option><option>Nur Mittwoch</option><option>Nur Freitag</option></select></div>':''}<div class="field"><label>Hinweis ans Team</label><textarea id="editNote" rows="3" placeholder="z. B. Beginn heute erst um 17:00 Uhr"></textarea></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="saveTraining(${batch})">Speichern</button></div>`)}
     function saveTraining(batch){const val=`${$('#editStart').value}–${$('#editEnd').value}`;const venue=$('#editVenue').value;if(batch){APP_STATE.sessions.filter(x=>x.date>='2026-10-06').forEach(x=>{x.time=val;if(x.day==='Mittwoch')x.venue=venue})}else{APP_STATE.sessions[0].time=val;APP_STATE.sessions[0].venue=venue}render();closeModal();toast(batch?'Trainingsserie aktualisiert':'Training aktualisiert')}
     $$('.navitem').forEach(b=>b.onclick=()=>nav(b.dataset.screen));$$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));$$('[data-demo]').forEach(b=>b.onclick=()=>setRole(b.dataset.demo));
+    if(db) $('.demo').classList.add('hidden');
     $('#loginForm').onsubmit=async e=>{
       e.preventDefault();
       if(!db){toast('Supabase noch nicht konfiguriert – bitte Demo wählen');return}
@@ -181,12 +186,56 @@
     $('#headerAvatar').onclick=()=>nav('profile');$('#modalOverlay').onclick=e=>{if(e.target.id==='modalOverlay')closeModal()};
     $('#editProfile').onclick=()=>showModal(`<h2>Spielerprofil bearbeiten</h2><p>Gesundheits- und Körperdaten sehen nur Trainer und Admin.</p><div class="field"><label>Profilfoto</label><input id="avatarFile" type="file" accept="image/*"></div><div class="field"><label>Name</label><input id="pName" value="${APP_STATE.profile.name}"></div><div class="formgrid"><div class="field"><label>Alter</label><input id="pAge" type="number" value="${APP_STATE.profile.age}"></div><div class="field"><label>Wurfhand</label><select id="pHand"><option>Rechts</option><option>Links</option><option>Beide</option></select></div><div class="field"><label>Größe (cm)</label><input id="pHeight" type="number" value="${APP_STATE.profile.height}"></div><div class="field"><label>Gewicht (kg)</label><input id="pWeight" type="number" value="${APP_STATE.profile.weight}"></div></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="saveProfile()">Speichern</button></div>`);
     function saveProfile(){APP_STATE.profile={name:$('#pName').value,age:+$('#pAge').value,height:+$('#pHeight').value,weight:+$('#pWeight').value,hand:$('#pHand').value};localStorage.setItem('ag-profile',JSON.stringify(APP_STATE.profile));const f=$('#avatarFile').files[0];if(f){const r=new FileReader();r.onload=()=>{$('#profileAvatar').innerHTML=`<img alt="Profilfoto" src="${r.result}">`;$('#headerAvatar').innerHTML=`<img alt="Profilfoto" src="${r.result}">`};r.readAsDataURL(f)}render();closeModal();toast('Profil gespeichert')}
-    $('#accounts').onclick=()=>showModal(`<h2>Konten & Rechte</h2><p>12 von 15 vorgesehenen Plätzen belegt.</p>${[['Dalia Hamdoun','Trainer'],['Trainer 2','Trainer'],['Leonie Muster','Eltern'],['Noah Familie','Eltern'],['Mila Familie','Eltern']].map(a=>`<div class="person"><div class="avatar">${a[0].split(' ').map(x=>x[0]).join('')}</div><div class="person-info"><div class="person-name">${a[0]}</div><div class="person-sub">Einladung aktiv</div></div><span class="account-badge">${a[1]}</span></div>`).join('')}<div class="modal-actions"><button class="ghost" onclick="closeModal()">Schließen</button><button class="primary" onclick="toast('Einladungsfunktion für Supabase vorbereitet')">+ Einladen</button></div>`);
+    $('#accounts').onclick=()=>showModal(`<h2>Konten & Rechte</h2><p>Neue Konten werden sicher in Supabase Authentication angelegt. Dort kannst du entweder ein Startpasswort vergeben oder eine Einladungs-E-Mail senden.</p><div class="setting"><span class="setting-icon">1</span><span class="setting-main"><span class="setting-title">Mit Startpasswort</span><span class="setting-sub">Add user → Create new user</span></span></div><div class="setting"><span class="setting-icon">2</span><span class="setting-main"><span class="setting-title">Per Einladung</span><span class="setting-sub">Add user → Send invitation</span></span></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Schließen</button><button class="primary" onclick="openUserManagement()">Supabase öffnen</button></div>`);
     $('#teamPlayers').onclick=()=>showModal(`<h2>Team & Spieler</h2><p>Private Spielerinformationen sind nur in dieser Traineransicht sichtbar.</p>${[['Lina Muster','9 J. · 138 cm · 31 kg'],['Noah Fischer','9 J. · Daten vollständig'],['Mila Schmitz','8 J. · Profil ergänzen']].map(a=>`<div class="person"><div class="avatar">${a[0].split(' ').map(x=>x[0]).join('')}</div><div class="person-info"><div class="person-name">${a[0]}</div><div class="person-sub">${a[1]}</div></div><span>›</span></div>`).join('')}<button class="ghost full" onclick="closeModal()">Schließen</button>`);
     $('#manageVenues').onclick=()=>showModal(`<h2>Hallen verwalten</h2><p>Bitte ergänze die noch offenen Adressen für A3, KC, Leibniz, WvS und KFS.</p>${APP_STATE.venues.slice(3).map(v=>`<div class="field"><label>${v.code}</label><input placeholder="Vollständige Adresse"></div>`).join('')}<div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="closeModal();toast('Adressen gespeichert')">Speichern</button></div>`);
     $('#privacy').onclick=()=>showModal(`<h2>Datenschutz</h2><p>Spieler sehen untereinander nur Profilfoto, Vorname und Alter. Größe, Gewicht, Wurfhand und Kontaktdaten sind auf Trainer und Admin beschränkt.</p><button class="ghost full" onclick="closeModal()">Verstanden</button>`);
+    $('#changePassword').onclick=()=>showModal(`<h2>Passwort ändern</h2><p>Gib zuerst dein aktuelles Passwort ein.</p><div class="field"><label>Aktuelles Passwort</label><input id="currentPassword" type="password" autocomplete="current-password" required></div><div class="field"><label>Neues Passwort</label><input id="newPassword" type="password" minlength="8" autocomplete="new-password" required></div><div class="field"><label>Neues Passwort wiederholen</label><input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">Abbrechen</button><button class="primary" id="changePasswordButton" onclick="saveChangedPassword()">Passwort speichern</button></div>`);
+    async function saveChangedPassword(){
+      if(!db){toast('Supabase ist nicht verbunden');return}
+      const current=$('#currentPassword').value,newPassword=$('#newPassword').value,confirm=$('#confirmPassword').value;
+      if(newPassword.length<8){toast('Das neue Passwort braucht mindestens 8 Zeichen');return}
+      if(newPassword!==confirm){toast('Die neuen Passwörter stimmen nicht überein');return}
+      const button=$('#changePasswordButton');button.disabled=true;button.textContent='Wird gespeichert…';
+      const {data:{user}}=await db.auth.getUser();
+      if(!user?.email){toast('Sitzung abgelaufen – bitte neu anmelden');button.disabled=false;button.textContent='Passwort speichern';return}
+      const {error:loginError}=await db.auth.signInWithPassword({email:user.email,password:current});
+      if(loginError){toast('Das aktuelle Passwort ist nicht korrekt');button.disabled=false;button.textContent='Passwort speichern';return}
+      const {error}=await db.auth.updateUser({password:newPassword});
+      if(error){toast(error.message);button.disabled=false;button.textContent='Passwort speichern';return}
+      closeModal(true);toast('Passwort wurde erfolgreich geändert');
+    }
+    function showInitialPasswordSetup(){
+      showModal(`<h2>Willkommen im Team</h2><p>Deine E-Mail wurde bestätigt. Lege jetzt dein persönliches Passwort fest, bevor du fortfährst.</p><div class="field"><label>Neues Passwort</label><input id="invitePassword" type="password" minlength="8" autocomplete="new-password" required autofocus></div><div class="field"><label>Passwort wiederholen</label><input id="invitePasswordConfirm" type="password" minlength="8" autocomplete="new-password" required></div><button class="primary full" id="invitePasswordButton" onclick="saveInitialPassword()">Passwort festlegen</button>`,true);
+    }
+    async function saveInitialPassword(){
+      const password=$('#invitePassword').value,confirm=$('#invitePasswordConfirm').value;
+      if(password.length<8){toast('Das Passwort braucht mindestens 8 Zeichen');return}
+      if(password!==confirm){toast('Die Passwörter stimmen nicht überein');return}
+      const button=$('#invitePasswordButton');button.disabled=true;button.textContent='Wird gespeichert…';
+      const {error}=await db.auth.updateUser({password});
+      if(error){toast(error.message);button.disabled=false;button.textContent='Passwort festlegen';return}
+      history.replaceState({},document.title,location.pathname);
+      closeModal(true);toast('Passwort gespeichert – du bist jetzt angemeldet');
+      await loadAuthenticatedUser();
+    }
+    function openUserManagement(){
+      const ref=SUPABASE_URL.replace('https://','').split('.')[0];
+      open(`https://supabase.com/dashboard/project/${ref}/auth/users`,'_blank','noopener');
+    }
     $('#logout').onclick=async()=>{if(db)await db.auth.signOut();$('#loginOverlay').classList.remove('hidden');nav('training')};
-    async function restoreSession(){if(!db)return;const {data}=await db.auth.getSession();if(!data.session)return;const {data:profile}=await db.from('profiles').select('display_name, role').eq('id',data.session.user.id).single();if(profile)setRole(profile.role,profile.display_name)}
+    async function loadAuthenticatedUser(){
+      const {data}=await db.auth.getSession();if(!data.session)return;
+      const {data:profile,error}=await db.from('profiles').select('display_name, role').eq('id',data.session.user.id).single();
+      if(error){toast('Das Benutzerprofil konnte nicht geladen werden');return}
+      setRole(profile.role,profile.display_name);
+    }
+    async function restoreSession(){
+      if(!db)return;
+      const {data}=await db.auth.getSession();if(!data.session)return;
+      if(AUTH_LINK_TYPE==='invite'||AUTH_LINK_TYPE==='recovery'){showInitialPasswordSetup();return}
+      await loadAuthenticatedUser();
+    }
     render();restoreSession();
   </script>
 </body>
