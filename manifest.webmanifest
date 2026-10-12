@@ -1,0 +1,19 @@
+{
+  "name": "ART Giants U10-3",
+  "short_name": "ART Giants",
+  "description": "Training, Spiele und Teamorganisation für ART Giants U10-3",
+  "lang": "de",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f6f8",
+  "theme_color": "#0b1220",
+  "icons": [
+    {
+      "src": "./assets/art-giants-app-icon.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
