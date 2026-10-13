@@ -1,4 +1,4 @@
-const CACHE_NAME = 'art-giants-pwa-v7';
+const CACHE_NAME = 'art-giants-pwa-v8';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,7 +8,10 @@ const APP_SHELL = [
   './assets/art-giants-icon-192.png',
   './assets/art-giants-icon-512.png',
   './assets/art-giants-maskable-512.png',
-  './assets/apple-touch-icon.png'
+  './assets/apple-touch-icon.png',
+  './apple-touch-icon.png',
+  './apple-touch-icon-precomposed.png',
+  './apple-touch-icon-v8.png'
 ];
 
 self.addEventListener('install', event => {
