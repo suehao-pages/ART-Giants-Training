@@ -14,6 +14,7 @@ team-member-permissions.sql
 training-schedule-v15.sql
 training-profile-v16.sql
 training-controls-v17.sql
+game-stats-v19.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -82,6 +83,12 @@ clear-all function used by the schedule manager. The database checks the
 signed-in role itself, so only trainer and admin accounts can delete the U10-3
 practice schedule and its linked attendance records.
 
+Then run `game-stats-v19.sql` once. It adds shot attempts and made shots to
+the existing game-statistics table and installs the protected game-attendance
+directory used for synchronized player photos. The directory exposes only the
+player name, photo and response; contact information continues to be returned
+only by the existing trainer/admin privacy function.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -123,5 +130,9 @@ practice schedule and its linked attendance records.
 - v18 shortens status and action labels, removes preloaded training examples,
   disables edit/delete actions when no practice records exist, and formats
   date fields automatically while the user enters digits.
+- v19 replaces the old withdrawal wording with Cancel/Stornieren, shows
+  clickable synchronized player photos in game attendance, refreshes the
+  profile header, and adds dropdown-based click entry for points, shots,
+  shooting percentage, assists and blocks with per-game average comparisons.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
