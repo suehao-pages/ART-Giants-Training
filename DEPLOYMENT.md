@@ -72,5 +72,8 @@ function is the authoritative security boundary.
   `apple-touch-icon-v8.png` filename forces iOS to request the corrected icon.
 - v10 adds adaptive iOS top/bottom safe-area handling for notched and
   Dynamic Island iPhones, in both portrait and landscape.
+- v11 extends the Statistik header colour behind the iOS status bar, fills the
+  bottom safe-area behind the navigation, and updates the Spiele controls and
+  result icons.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
