@@ -75,5 +75,9 @@ function is the authoritative security boundary.
 - v11 extends the Statistik header colour behind the iOS status bar, fills the
   bottom safe-area behind the navigation, and updates the Spiele controls and
   result icons.
+- v12 fixes the iOS bottom navigation on unusual logical viewport widths: the
+  desktop offset now applies only to mouse devices, the duplicate standalone
+  safe-area layer is removed, and WebKit standalone mode is pinned to the
+  visible screen while preserving the Home Indicator inset.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
