@@ -70,5 +70,7 @@ function is the authoritative security boundary.
 - iOS caches home-screen icons separately from Safari. After deploying v8,
   delete the existing home-screen app and add it again. The new
   `apple-touch-icon-v8.png` filename forces iOS to request the corrected icon.
+- v10 adds adaptive iOS top/bottom safe-area handling for notched and
+  Dynamic Island iPhones, in both portrait and landscape.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
