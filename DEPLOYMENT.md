@@ -13,6 +13,7 @@ service-worker.js
 team-member-permissions.sql
 training-schedule-v15.sql
 training-profile-v16.sql
+training-controls-v17.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -76,6 +77,11 @@ corrections, safe player profile cards, shared profile photos and the contact
 privacy boundary. Input mode then creates only missing dates; existing dates
 can be changed only through the correction workflow and its confirmation.
 
+Finally, run `training-controls-v17.sql` once. It installs the protected
+clear-all function used by the schedule manager. The database checks the
+signed-in role itself, so only trainer and admin accounts can delete the U10-3
+practice schedule and its linked attendance records.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -110,5 +116,9 @@ can be changed only through the correction workflow and its confirmation.
   removes separate holiday notice cards, and adds clickable privacy-aware
   player cards with synchronized profile photos and age calculated from date
   of birth.
+- v17 removes operating-system-localized date controls, adds a protected
+  clear-all schedule action with a destructive confirmation, uses role-based
+  home messages, removes the old subtitle, and slightly enlarges bottom
+  navigation icons and labels.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
