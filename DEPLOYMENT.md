@@ -12,6 +12,7 @@ manifest.webmanifest
 service-worker.js
 team-member-permissions.sql
 training-schedule-v15.sql
+training-profile-v16.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -70,6 +71,11 @@ package and run the complete file once. It enables the date-range input,
 stores generated practices in Supabase, assigns the editing account as coach,
 and installs the official NRW school-holiday breaks used to skip practices.
 
+After that, run `training-profile-v16.sql` once. It adds confirmed bulk
+corrections, safe player profile cards, shared profile photos and the contact
+privacy boundary. Input mode then creates only missing dates; existing dates
+can be changed only through the correction workflow and its confirmation.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -99,5 +105,10 @@ and installs the official NRW school-holiday breaks used to skip practices.
   coaches/admins. Generated practices are saved as drafts, appear immediately
   in the calendar and home list, and registered NRW school holidays are
   skipped automatically.
+- v16 separates schedule input from schedule correction, requires a warning
+  confirmation before corrections, limits the home list to the current week,
+  removes separate holiday notice cards, and adds clickable privacy-aware
+  player cards with synchronized profile photos and age calculated from date
+  of birth.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
