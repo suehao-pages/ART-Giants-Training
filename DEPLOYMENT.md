@@ -21,6 +21,9 @@ assets/
   art-giants-icon-192.png
   art-giants-icon-512.png
   art-giants-maskable-512.png
+  basketball-admin-v9.png
+  basketball-trainer-v9.png
+  basketball-parent-v9.png
 ```
 
 In GitHub, open **Settings → Pages** and use **Deploy from a branch**, branch

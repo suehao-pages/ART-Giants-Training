@@ -1,4 +1,4 @@
-const CACHE_NAME = 'art-giants-pwa-v8';
+const CACHE_NAME = 'art-giants-pwa-v9';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,9 @@ const APP_SHELL = [
   './assets/art-giants-icon-192.png',
   './assets/art-giants-icon-512.png',
   './assets/art-giants-maskable-512.png',
+  './assets/basketball-admin-v9.png',
+  './assets/basketball-trainer-v9.png',
+  './assets/basketball-parent-v9.png',
   './assets/apple-touch-icon.png',
   './apple-touch-icon.png',
   './apple-touch-icon-precomposed.png',
