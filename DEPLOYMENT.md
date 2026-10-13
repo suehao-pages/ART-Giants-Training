@@ -11,6 +11,7 @@ config.js
 manifest.webmanifest
 service-worker.js
 team-member-permissions.sql
+training-schedule-v15.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -62,6 +63,13 @@ package and run it once. The database enforces the visibility rules:
 The web app also hides the menu item for parent/player accounts, but the SQL
 function is the authoritative security boundary.
 
+## Activate editable training schedules
+
+In **Supabase → SQL Editor**, open `training-schedule-v15.sql` from this
+package and run the complete file once. It enables the date-range input,
+stores generated practices in Supabase, assigns the editing account as coach,
+and installs the official NRW school-holiday breaks used to skip practices.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -87,5 +95,9 @@ function is the authoritative security boundary.
   the current Berlin week, the expanded header is correctly aligned, month
   navigation works in both directions, and practice dates open their matching
   detail screen.
+- v15 adds real single-practice editing and date-range schedule input for
+  coaches/admins. Generated practices are saved as drafts, appear immediately
+  in the calendar and home list, and registered NRW school holidays are
+  skipped automatically.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
