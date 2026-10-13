@@ -145,5 +145,9 @@ Parent and player accounts receive no absence-reason field from the database.
 - v21 targets Chrome-installed Android apps specifically: the installed app
   gets one explicit full-height vertical scroll container, while ordinary
   Chrome tabs and iOS keep their existing document-scrolling behavior.
+- v22 uses Absagen in German, makes the profile header full width, keeps street
+  addresses inside detail views, adds softer screen/button motion and improves
+  Android rendering. The bottom navigation is outside the scrolling container
+  and responds on touch-down so momentum scrolling cannot consume the first tap.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
