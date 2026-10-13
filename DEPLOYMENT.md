@@ -15,6 +15,7 @@ training-schedule-v15.sql
 training-profile-v16.sql
 training-controls-v17.sql
 game-stats-v19.sql
+game-rsvp-v20.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -89,6 +90,10 @@ directory used for synchronized player photos. The directory exposes only the
 player name, photo and response; contact information continues to be returned
 only by the existing trainer/admin privacy function.
 
+Finally, run `game-rsvp-v20.sql` once. It removes the Maybe response from the
+new game workflow and returns absence reasons only to trainer/admin accounts.
+Parent and player accounts receive no absence-reason field from the database.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -134,5 +139,8 @@ only by the existing trainer/admin privacy function.
   clickable synchronized player photos in game attendance, refreshes the
   profile header, and adds dropdown-based click entry for points, shots,
   shooting percentage, assists and blocks with per-game average comparisons.
+- v20 restores native root-page scrolling for Xiaomi/Android browsers, uses
+  two dot-based game responses, requires a private reason when a player cannot
+  attend, adds address-copy controls, and labels every route action Google Maps.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
