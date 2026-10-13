@@ -120,5 +120,8 @@ practice schedule and its linked attendance records.
   clear-all schedule action with a destructive confirmation, uses role-based
   home messages, removes the old subtitle, and slightly enlarges bottom
   navigation icons and labels.
+- v18 shortens status and action labels, removes preloaded training examples,
+  disables edit/delete actions when no practice records exist, and formats
+  date fields automatically while the user enters digits.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.

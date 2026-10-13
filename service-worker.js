@@ -1,4 +1,4 @@
-const CACHE_NAME = 'art-giants-pwa-v17';
+const CACHE_NAME = 'art-giants-pwa-v18';
 const APP_SHELL = [
   './',
   './index.html',
