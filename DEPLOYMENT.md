@@ -83,5 +83,9 @@ function is the authoritative security boundary.
   layout. Touch devices always use the full available width, the document owns
   vertical scrolling, and the navigation is fixed only to the real viewport.
   Desktop centring is now limited to devices with a precise mouse pointer.
+- v14 makes the practice calendar fully dynamic: the collapsed view follows
+  the current Berlin week, the expanded header is correctly aligned, month
+  navigation works in both directions, and practice dates open their matching
+  detail screen.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
