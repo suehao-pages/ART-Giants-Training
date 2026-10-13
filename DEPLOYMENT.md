@@ -79,5 +79,9 @@ function is the authoritative security boundary.
   desktop offset now applies only to mouse devices, the duplicate standalone
   safe-area layer is removed, and WebKit standalone mode is pinned to the
   visible screen while preserving the Home Indicator inset.
+- v13 replaces model-specific viewport workarounds with one responsive mobile
+  layout. Touch devices always use the full available width, the document owns
+  vertical scrolling, and the navigation is fixed only to the real viewport.
+  Desktop centring is now limited to devices with a precise mouse pointer.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
