@@ -149,5 +149,9 @@ Parent and player accounts receive no absence-reason field from the database.
   addresses inside detail views, adds softer screen/button motion and improves
   Android rendering. The bottom navigation is outside the scrolling container
   and responds on touch-down so momentum scrolling cannot consume the first tap.
+- v23 redesigns each single-game statistics card with a navy match header,
+  modular metric tiles, a shooting-percentage ring, and clearer average
+  comparisons. Closing game registration now requires an explicit confirmation
+  from trainers or administrators.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
