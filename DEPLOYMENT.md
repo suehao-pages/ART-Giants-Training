@@ -142,5 +142,8 @@ Parent and player accounts receive no absence-reason field from the database.
 - v20 restores native root-page scrolling for Xiaomi/Android browsers, uses
   two dot-based game responses, requires a private reason when a player cannot
   attend, adds address-copy controls, and labels every route action Google Maps.
+- v21 targets Chrome-installed Android apps specifically: the installed app
+  gets one explicit full-height vertical scroll container, while ordinary
+  Chrome tabs and iOS keep their existing document-scrolling behavior.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.

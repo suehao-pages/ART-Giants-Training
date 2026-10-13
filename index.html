@@ -15,7 +15,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/art-giants-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon-v8.png">
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./apple-touch-icon-v8.png">
-  <link rel="manifest" href="./manifest.webmanifest?v=20">
+  <link rel="manifest" href="./manifest.webmanifest?v=21">
   <title>ART Giants U10-3</title>
   <style>
     :root{--ink:#101828;--muted:#667085;--line:#e7e9ee;--paper:#f5f6f8;--card:#fff;--navy:#0b1220;--blue:#1746e0;--red:#e5252a;--green:#0f9f6e;--amber:#c47b12;--shadow:0 18px 50px rgba(16,24,40,.11);--radius:24px;--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--nav-safe-bottom:max(8px,var(--safe-bottom));--nav-row-height:58px}
@@ -55,6 +55,7 @@
     @media(min-width:700px) and (hover:hover) and (pointer:fine){body{padding:24px}.app{min-height:calc(100dvh - 48px);border-radius:32px}nav{bottom:24px;border-radius:0 0 32px 32px}.overlay{place-items:center}.modal{border-radius:28px}}
     @media(display-mode:standalone){html,body{background:var(--paper)}body{padding:0}.app{max-width:none;min-height:100dvh;border-radius:0;box-shadow:none}nav{left:0;right:0;bottom:0!important;width:auto;max-width:none;transform:none;border-radius:0}.top{padding-top:calc(max(20px,var(--safe-top)) + 8px)}.screen:not(#screen-training){padding-top:calc(max(20px,var(--safe-top)) + 8px)}#screen-games{margin-top:0}#screen-statistics{padding-top:0}.stats-dashboard{padding-top:calc(24px + max(20px,var(--safe-top)) + 8px)}.signup-hero{margin-top:0}}
     @media(display-mode:standalone) and (orientation:landscape){.screen:not(#screen-training){padding-top:max(8px,var(--safe-top))}.top{padding-top:max(8px,var(--safe-top))}}
+    html.android-standalone,html.android-standalone body{height:100%;min-height:0;overflow:hidden;overscroll-behavior:none}html.android-standalone .app{height:100vh;height:100dvh;min-height:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto;touch-action:pan-y pinch-zoom;-webkit-overflow-scrolling:touch}
   </style>
 </head>
 <body>
@@ -150,6 +151,8 @@
   <script src="./config.js"></script>
   <script>
     /* Public browser credentials only. Never place the service_role key here. */
+    const ANDROID_STANDALONE=/Android/i.test(navigator.userAgent)&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||document.referrer.startsWith('android-app://'));
+    document.documentElement.classList.toggle('android-standalone',ANDROID_STANDALONE);
     const SUPABASE_URL = window.AG_CONFIG?.supabaseUrl || "";
     const SUPABASE_ANON_KEY = window.AG_CONFIG?.supabaseAnonKey || "";
     const db = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
@@ -223,7 +226,7 @@
     function bindDateInputs(){$$('[data-date-entry]').forEach(input=>{input.oninput=()=>{const digits=input.value.replace(/\D/g,'').slice(0,8);if(APP_STATE.language==='en')input.value=[digits.slice(0,4),digits.slice(4,6),digits.slice(6,8)].filter(Boolean).join('/');else input.value=[digits.slice(0,2),digits.slice(2,4),digits.slice(4,8)].filter(Boolean).join('.')}})}
     function applyLanguage(){document.documentElement.lang=APP_STATE.language;$$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));$$('[data-i18n-html]').forEach(el=>el.innerHTML=t(el.dataset.i18nHtml));$('#heroTitle').innerHTML=roleHeroTitle();$('#languageValue').textContent=APP_STATE.language==='en'?'English':'Deutsch';$('nav').setAttribute('aria-label',APP_STATE.language==='en'?'Main navigation':'Hauptnavigation');$('#avatarEdit').setAttribute('aria-label',APP_STATE.language==='en'?'Change profile photo':'Profilfoto ändern');}
     function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}
-    function nav(name){APP_STATE.currentScreen=name;$$('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));$$('.navitem[data-screen]').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));const training=name==='training';$('#appHeader').classList.toggle('hidden',!training);$('#nextCard').classList.toggle('hidden',!training||!nextSession());if(name==='games')loadGames(true);if(name==='statistics')loadGames(true).then(()=>loadStatistics(true));scrollTo({top:0,behavior:'smooth'})}
+    function nav(name){APP_STATE.currentScreen=name;$$('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));$$('.navitem[data-screen]').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));const training=name==='training';$('#appHeader').classList.toggle('hidden',!training);$('#nextCard').classList.toggle('hidden',!training||!nextSession());if(name==='games')loadGames(true);if(name==='statistics')loadGames(true).then(()=>loadStatistics(true));(ANDROID_STANDALONE?$('#app'):window).scrollTo({top:0,behavior:'smooth'})}
     function setRole(role, displayName){APP_STATE.role=role;localStorage.setItem("ag-role",role);const app=$("#app");app.className=`app role-${role}`;const labels={player:[displayName||(APP_STATE.language==='en'?"Player":"Spieler/in"),APP_STATE.language==='en'?"Player · U10-3":"Spieler/in · U10-3"],parent:[displayName||(APP_STATE.language==='en'?"Parent account":"Elternkonto"),APP_STATE.language==='en'?"Parent account · U10-3":"Elternkonto · U10-3"],trainer:[displayName||(APP_STATE.language==='en'?"Coach":"Trainer/in"),APP_STATE.language==='en'?"Coach · U10-3":"Trainer/in · U10-3"],admin:[displayName||"Admin",APP_STATE.language==='en'?"Administration":"Administration"]};const label=labels[role]||labels.parent;APP_STATE.accountName=label[0];$("#greetingName").textContent=label[0].split(' ')[0];$("#profileRole").textContent=label[1];updateQuickAction();$("#loginOverlay").classList.add('hidden');render();toast(APP_STATE.language==='en'?`Signed in as ${label[1]}`:`Angemeldet als ${label[1]}`)}
     function updateQuickAction(){
       const coach=['trainer','admin'].includes(APP_STATE.role),button=$('#quickAction');
