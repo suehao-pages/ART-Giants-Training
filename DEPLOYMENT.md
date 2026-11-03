@@ -16,6 +16,7 @@ training-profile-v16.sql
 training-controls-v17.sql
 game-stats-v19.sql
 game-rsvp-v20.sql
+self-registration-v24.sql
 apple-touch-icon.png
 apple-touch-icon-precomposed.png
 apple-touch-icon-v8.png
@@ -94,6 +95,11 @@ Finally, run `game-rsvp-v20.sql` once. It removes the Maybe response from the
 new game workflow and returns absence reasons only to trainer/admin accounts.
 Parent and player accounts receive no absence-reason field from the database.
 
+Finally, run `self-registration-v24.sql` once. It keeps every existing account
+approved, makes future signups parent accounts in a pending state, lets admins
+and trainers approve new parent/player accounts, and adds a restrictive RLS
+approval gate to all team data.
+
 ## Install and update
 
 - Android: open the site in Chrome and choose **App installieren**.
@@ -153,5 +159,14 @@ Parent and player accounts receive no absence-reason field from the database.
   modular metric tiles, a shooting-percentage ring, and clearer average
   comparisons. Closing game registration now requires an explicit confirmation
   from trainers or administrators.
+- v24 adds secure parent self-registration from the login screen. New accounts
+  start as pending parent accounts, receive access only after trainer/admin
+  approval, and are blocked from team data by database-level RLS until then.
+- v25 adds a dedicated **Freigaben** entry inside Profile for trainers and
+  administrators. It shows only pending registrations and refreshes its badge
+  immediately after an account is approved.
+- v26 simplifies the production login screen by removing the tagline and demo
+  role preview. Registration now reads as an account request and confirms that
+  the request is waiting for trainer/admin approval.
 - When `service-worker.js` changes later, increment `CACHE_NAME` so old static
   assets are removed on activation.
