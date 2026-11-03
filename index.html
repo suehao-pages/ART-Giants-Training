@@ -146,7 +146,7 @@
 
   <div class="overlay login" id="loginOverlay">
     <div class="modal loginbox"><div class="loginlogo"><img class="brand-logo" src="./assets/art-giants-logo.png" alt="ART Giants Düsseldorf"><h1>ART Giants U10-3</h1></div>
-      <form id="loginForm"><div class="field"><label>E-Mail</label><input type="email" id="email" placeholder="name@beispiel.de" autocomplete="email" required></div><div class="field"><label>Passwort</label><input type="password" id="password" placeholder="••••••••" minlength="6" autocomplete="current-password" required></div><button class="primary full" type="submit">Anmelden</button></form>
+      <form id="loginForm"><div class="field"><label>E-Mail</label><input type="email" id="email" placeholder="name@beispiel.de" autocomplete="email" required></div><div class="field"><div class="field-head"><label>Passwort</label><button class="text-link" id="openPasswordRecovery" type="button">Passwort vergessen?</button></div><input type="password" id="password" placeholder="••••••••" minlength="6" autocomplete="current-password" required></div><button class="primary full" type="submit">Anmelden</button></form>
       <div class="login-register"><span>Noch kein Konto?</span><button class="secondary register-button full" id="openRegistration" type="button">Registrieren</button></div>
     </div>
   </div>
@@ -589,6 +589,22 @@
     $$('.navitem[data-screen]').forEach(button=>bindFastNavTap(button,()=>nav(button.dataset.screen)));bindFastNavTap($('#quickAction'),()=>{const session=nextSession();if(session)openTrainingPanel(session.id);else if(['trainer','admin'].includes(APP_STATE.role))openTrainingManagement();else toast(APP_STATE.language==='en'?'No practice is scheduled yet':'Noch kein Training eingetragen')});$$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
     $$('.games-tab').forEach(button=>button.onclick=()=>{APP_STATE.gamesTab=button.dataset.gameTab;renderGames()});
     $('#openRegistration').onclick=openRegistration;
+    $('#openPasswordRecovery').onclick=openPasswordRecovery;
+    function openPasswordRecovery(){
+      if(!db){toast('Die Passwort-Wiederherstellung ist momentan nicht verbunden');return}
+      const email=$('#email').value.trim();
+      showModal(`<h2>Passwort zurücksetzen</h2><p>Gib die E-Mail-Adresse deines Kontos ein. Wir senden dir einen Link, mit dem du ein neues Passwort festlegen kannst.</p><div class="field"><label>E-Mail</label><input id="recoveryEmail" type="email" autocomplete="email" value="${escapeHtml(email)}" placeholder="name@beispiel.de" required autofocus></div><div class="modal-actions"><button class="ghost" type="button" onclick="closeModal()">Zurück</button><button class="primary" id="recoverySubmit" type="button" onclick="requestPasswordRecovery()">Link senden</button></div>`);
+    }
+    async function requestPasswordRecovery(){
+      if(!db)return;
+      const input=$('#recoveryEmail'),email=input.value.trim().toLowerCase();
+      if(!email||!input.checkValidity()){toast('Bitte eine gültige E-Mail-Adresse eingeben');return}
+      const button=$('#recoverySubmit');button.disabled=true;button.textContent='Wird gesendet…';
+      const redirectTo=`${location.origin}${location.pathname}`;
+      const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo});
+      if(error){button.disabled=false;button.textContent='Link senden';toast('Die E-Mail konnte nicht gesendet werden. Bitte versuche es später erneut.');return}
+      showModal(`<h2>E-Mail wurde versendet</h2><p>Wenn für diese E-Mail-Adresse ein Konto existiert, erhältst du in Kürze einen Link zum Zurücksetzen des Passworts.</p><div class="warning-box">Prüfe bitte auch deinen Spam-Ordner. Die E-Mail kann einige Minuten benötigen.</div><button class="primary full" type="button" onclick="closeModal()">Zur Anmeldung</button>`);
+    }
     function openRegistration(){
       if(!db){toast('Supabase ist noch nicht verbunden');return}
       showModal(`<h2>Elternkonto beantragen</h2><p>Fülle die Angaben aus und reiche das Konto zur Freigabe ein.</p><div class="registration-note"><b>Standardrolle: Elternkonto</b><br>Nach dem Absenden prüft ein Trainer oder Administrator die Anfrage.</div><div class="field"><label>Name des Kindes / Anzeigename</label><input id="registerName" type="text" maxlength="80" autocomplete="name" placeholder="z. B. Mia Mustermann" required></div><div class="field"><label>E-Mail</label><input id="registerEmail" type="email" autocomplete="email" placeholder="name@beispiel.de" required></div><div class="field"><label>Passwort</label><input id="registerPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Mindestens 8 Zeichen" required></div><div class="field"><label>Passwort wiederholen</label><input id="registerPasswordConfirm" type="password" minlength="8" autocomplete="new-password" required></div><div class="modal-actions"><button class="ghost" type="button" onclick="closeModal()">Zurück</button><button class="primary" id="registerSubmit" type="button" onclick="registerParentAccount()">Konto einreichen</button></div>`);
