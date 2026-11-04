@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v41-game-meeting';
+const CACHE_NAME = 'hoopslot-pwa-v42-team-logos-calendar';
 const APP_SHELL = [
   './',
   './index.html',
@@ -14,6 +14,13 @@ const APP_SHELL = [
   './assets/basketball-admin-v9.png',
   './assets/basketball-trainer-v9.png',
   './assets/basketball-parent-v9.png',
+  './assets/team-suedwest-baskets.png',
+  './assets/team-osterather-tv.jpg',
+  './assets/team-art-giants.png',
+  './assets/team-djk-tusa.svg',
+  './assets/team-tg-duesseldorf.png',
+  './assets/team-isd-sportverein.jpg',
+  './assets/team-art-duesseldorf.webp',
   './apple-touch-icon.png',
   './apple-touch-icon-precomposed.png'
 ];
