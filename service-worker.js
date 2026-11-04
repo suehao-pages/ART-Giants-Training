@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v39-org-brand';
+const CACHE_NAME = 'hoopslot-pwa-v40-weather';
 const APP_SHELL = [
   './',
   './index.html',
