@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v42-team-logos-calendar';
+const CACHE_NAME = 'hoopslot-pwa-v43-clean-match-calendar';
 const APP_SHELL = [
   './',
   './index.html',
@@ -19,7 +19,7 @@ const APP_SHELL = [
   './assets/team-art-giants.png',
   './assets/team-djk-tusa.svg',
   './assets/team-tg-duesseldorf.png',
-  './assets/team-isd-sportverein.jpg',
+  './assets/team-isd-sportverein.png',
   './assets/team-art-duesseldorf.webp',
   './apple-touch-icon.png',
   './apple-touch-icon-precomposed.png'
