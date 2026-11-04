@@ -1,22 +1,21 @@
-const CACHE_NAME = 'hoopslot-pwa-v38-brand';
+const CACHE_NAME = 'hoopslot-pwa-v39-org-brand';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './assets/favicon-32.png',
+  './assets/hoopslot-app-icon-32.png',
   './assets/art-giants-logo.png',
   './assets/hoopslot-logo.png',
   './assets/hoopslot-logo-white.png',
-  './assets/art-giants-icon-192.png',
-  './assets/art-giants-icon-512.png',
-  './assets/art-giants-maskable-512.png',
+  './assets/hoopslot-app-icon-180.png',
+  './assets/hoopslot-app-icon-192.png',
+  './assets/hoopslot-app-icon-512.png',
+  './assets/hoopslot-app-icon-maskable-512.png',
   './assets/basketball-admin-v9.png',
   './assets/basketball-trainer-v9.png',
   './assets/basketball-parent-v9.png',
-  './assets/apple-touch-icon.png',
   './apple-touch-icon.png',
-  './apple-touch-icon-precomposed.png',
-  './apple-touch-icon-v8.png'
+  './apple-touch-icon-precomposed.png'
 ];
 
 self.addEventListener('install', event => {
