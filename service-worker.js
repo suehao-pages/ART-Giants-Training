@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v44-native-calendar-stamps';
+const CACHE_NAME = 'hoopslot-pwa-v45-restored-role-balls';
 const APP_SHELL = [
   './',
   './index.html',
