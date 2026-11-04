@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v45-restored-role-balls';
+const CACHE_NAME = 'hoopslot-pwa-v46-games-weather';
 const APP_SHELL = [
   './',
   './index.html',
