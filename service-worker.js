@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v49-games-polish';
+const CACHE_NAME = 'hoopslot-pwa-v50-calendar-countdown';
 const APP_SHELL = [
   './',
   './index.html',
