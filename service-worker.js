@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v48-home-training-cards';
+const CACHE_NAME = 'hoopslot-pwa-v49-games-polish';
 const APP_SHELL = [
   './',
   './index.html',
