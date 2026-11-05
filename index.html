@@ -15,7 +15,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/hoopslot-app-icon-192.png?v=40">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/hoopslot-app-icon-180.png?v=40">
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./assets/hoopslot-app-icon-180.png?v=40">
-  <link rel="manifest" href="./manifest.webmanifest?v=56">
+  <link rel="manifest" href="./manifest.webmanifest?v=57">
   <title>HoopSlot · ART Giants U10-3</title>
   <style>
     :root{--ink:#101828;--muted:#667085;--line:#e7e9ee;--paper:#f5f6f8;--card:#fff;--navy:#0b1220;--blue:#1746e0;--red:#e5252a;--green:#0f9f6e;--amber:#c47b12;--shadow:0 18px 50px rgba(16,24,40,.11);--radius:24px;--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--nav-safe-bottom:max(8px,var(--safe-bottom));--nav-row-height:58px}
@@ -114,21 +114,23 @@
     .match-meeting{font-size:11px}.match-countdown{color:var(--game-orange)}.countdown-digits{font-size:11px;color:var(--game-orange)}.countdown-digits i{color:var(--game-orange)}.countdown-labels{font-size:4px;color:#98a2b3}
     .compact-matchup{min-height:86px;margin:7px 0 2px;grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr)}.compact-team-logo{width:52px;height:52px;flex-basis:52px}.compact-team b{font-size:11px}.compact-center strong{font-size:15px}.compact-center small{font-size:10px}.upcoming-compact-card{padding-top:14px;padding-bottom:13px}
     @media(max-width:380px){.home-hero-grid{min-height:142px}.home-identity,.weather-hero{height:142px;min-height:142px}.weather-icon-wrap{height:56px;flex-basis:56px}.weather-symbol{width:56px;height:56px}.eyebrow{margin-bottom:9px}.match-meeting,.countdown-digits{font-size:10px}.countdown-labels{font-size:3.7px}.compact-matchup{min-height:80px;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr)}.compact-team-logo{width:47px;height:47px;flex-basis:47px}.compact-team b{font-size:10px}.compact-center strong{font-size:14px}.compact-center small{font-size:9px}}
-    /* v56: top flip countdown, quieter graphite palette and tighter RSVP footer. */
-    .match-countdown-top{width:224px;max-width:78%;margin:4px auto 3px;display:grid;gap:5px;color:#343943;font-style:normal}
-    .match-countdown-top .countdown-digits{display:grid;grid-template-columns:42px 10px 42px 10px 42px 10px 42px;justify-content:center;align-items:center;width:100%;font-size:20px;line-height:1;font-weight:850;color:#343943;font-variant-numeric:tabular-nums}
-    .match-countdown-top .countdown-digits b{height:42px;border:1px solid #d7dce4;border-radius:8px;background:linear-gradient(180deg,#f7f8fa 0%,#fff 48%,#dfe3e9 49%,#f0f2f5 100%);box-shadow:0 5px 10px rgba(16,24,40,.13),inset 0 1px 0 #fff;display:grid;place-items:center;position:relative;text-align:center}
+    /* v57: countdown shares the top row and uses centred three-letter units. */
+    .match-card{position:relative}
+    .match-card .match-top{min-height:48px}
+    .match-countdown-top{position:absolute;top:15px;left:50%;width:168px;margin:0;transform:translateX(-50%);display:grid;gap:5px;color:#343943;font-style:normal;z-index:1}
+    .match-countdown-top .countdown-digits{display:grid;grid-template-columns:36px 8px 36px 8px 36px 8px 36px;justify-content:center;align-items:center;width:100%;font-size:18px;line-height:1;font-weight:850;color:#343943;font-variant-numeric:tabular-nums}
+    .match-countdown-top .countdown-digits b{height:36px;border:1px solid #d7dce4;border-radius:7px;background:linear-gradient(180deg,#f7f8fa 0%,#fff 48%,#dfe3e9 49%,#f0f2f5 100%);box-shadow:0 4px 9px rgba(16,24,40,.13),inset 0 1px 0 #fff;display:grid;place-items:center;position:relative;text-align:center}
     .match-countdown-top .countdown-digits b:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#cbd1da;opacity:.8}
     .match-countdown-top .countdown-digits i{color:#747b87;font:inherit;text-align:center}
-    .match-countdown-top .countdown-labels{display:grid;grid-template-columns:repeat(4,42px);justify-content:center;gap:20px;width:100%;color:#8b95a5;font-size:5px;line-height:1;text-transform:uppercase;letter-spacing:.04em}
+    .match-countdown-top .countdown-labels{display:grid;grid-template-columns:repeat(4,36px);justify-content:center;gap:8px;width:100%;color:#7c8798;font-size:7px;font-weight:750;line-height:1;text-transform:uppercase;letter-spacing:.025em}
     .match-countdown-top .countdown-labels small{font:inherit;text-align:center}
-    .match-card .match-teams{margin:7px 0 8px}
+    .match-card .match-teams{margin:1px 0 6px}
     .match-card .match-vs{gap:3px}
     .match-card .match-meeting{color:var(--game-orange);font-weight:800}
-    .match-card .match-foot{padding-top:8px;min-height:43px}
+    .match-card .match-foot{padding-top:7px;min-height:40px}
     .match-card .rsvp-summary{margin-top:0}
-    .match-card{padding-bottom:11px}
-    @media(max-width:380px){.match-countdown-top{width:204px;margin-top:3px}.match-countdown-top .countdown-digits{grid-template-columns:38px 9px 38px 9px 38px 9px 38px;font-size:18px}.match-countdown-top .countdown-digits b{height:38px}.match-countdown-top .countdown-labels{grid-template-columns:repeat(4,38px);gap:18px;font-size:4.5px}.match-card .match-foot{padding-top:7px}}
+    .match-card{padding-top:15px;padding-bottom:9px}
+    @media(max-width:380px){.match-card .match-top{min-height:44px}.match-countdown-top{top:14px;width:144px}.match-countdown-top .countdown-digits{grid-template-columns:30px 8px 30px 8px 30px 8px 30px;font-size:15px}.match-countdown-top .countdown-digits b{height:32px}.match-countdown-top .countdown-labels{grid-template-columns:repeat(4,30px);gap:8px;font-size:6px}.match-card .match-kicker{font-size:9px;letter-spacing:.025em}.match-card .match-foot{padding-top:6px}}
   </style>
 </head>
 <body>
@@ -476,7 +478,7 @@
     function gameCountdownTarget(game){const start=new Date(game.starts_at).getTime(),meeting=meetingClock(game.meeting_time);if(!meeting||!Number.isFinite(start))return start;const [gameHour,gameMinute]=gameClock(game.starts_at).split(':').map(Number),[meetingHour,meetingMinute]=meeting.split(':').map(Number);return start-((gameHour*60+gameMinute)-(meetingHour*60+meetingMinute))*60000}
     function gameCountdownParts(target){const difference=Math.max(0,Number(target)-Date.now()),days=Math.floor(difference/86400000),afterDays=difference-days*86400000,hours=Math.floor(afterDays/3600000),afterHours=afterDays-hours*3600000,minutes=Math.floor(afterHours/60000),seconds=Math.floor((afterHours-minutes*60000)/1000),pad=value=>String(value).padStart(2,'0');return[pad(days),pad(hours),pad(minutes),pad(seconds)]}
     function gameCountdownText(target){const [days,hours,minutes,seconds]=gameCountdownParts(target);return`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`}
-    function gameCountdownMarkup(target){const [days,hours,minutes,seconds]=gameCountdownParts(target);return`<span class="countdown-digits"><b>${days}</b><i>:</i><b>${hours}</b><i>:</i><b>${minutes}</b><i>:</i><b>${seconds}</b></span><span class="countdown-labels"><small>DAYS</small><small>HOURS</small><small>MIN</small><small>SEC</small></span>`}
+    function gameCountdownMarkup(target){const [days,hours,minutes,seconds]=gameCountdownParts(target),units=APP_STATE.language==='en'?['DAY','HRS','MIN','SEC']:['TAG','STD','MIN','SEK'];return`<span class="countdown-digits"><b>${days}</b><i>:</i><b>${hours}</b><i>:</i><b>${minutes}</b><i>:</i><b>${seconds}</b></span><span class="countdown-labels">${units.map(unit=>`<small>${unit}</small>`).join('')}</span>`}
     function refreshGameCountdowns(){$$('[data-game-countdown]').forEach(node=>{node.innerHTML=gameCountdownMarkup(node.dataset.gameCountdown);node.setAttribute('aria-label',gameCountdownText(node.dataset.gameCountdown))})}
     function suggestedMeetingTime(game){const parts=gameClock(game.starts_at).split(':').map(Number),minutes=(parts[0]*60+parts[1]-45+1440)%1440;return `${String(Math.floor(minutes/60)).padStart(2,'0')}:${String(minutes%60).padStart(2,'0')}`}
     function meetingTimeIsValid(game,value){return /^\d{2}:\d{2}$/.test(value)&&value<gameClock(game.starts_at)}
