@@ -15,7 +15,7 @@
   <link rel="icon" type="image/png" sizes="192x192" href="./assets/hoopslot-app-icon-192.png?v=40">
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/hoopslot-app-icon-180.png?v=40">
   <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./assets/hoopslot-app-icon-180.png?v=40">
-  <link rel="manifest" href="./manifest.webmanifest?v=55">
+  <link rel="manifest" href="./manifest.webmanifest?v=56">
   <title>HoopSlot · ART Giants U10-3</title>
   <style>
     :root{--ink:#101828;--muted:#667085;--line:#e7e9ee;--paper:#f5f6f8;--card:#fff;--navy:#0b1220;--blue:#1746e0;--red:#e5252a;--green:#0f9f6e;--amber:#c47b12;--shadow:0 18px 50px rgba(16,24,40,.11);--radius:24px;--safe-top:env(safe-area-inset-top,0px);--safe-right:env(safe-area-inset-right,0px);--safe-bottom:env(safe-area-inset-bottom,0px);--safe-left:env(safe-area-inset-left,0px);--nav-safe-bottom:max(8px,var(--safe-bottom));--nav-row-height:58px}
@@ -114,6 +114,21 @@
     .match-meeting{font-size:11px}.match-countdown{color:var(--game-orange)}.countdown-digits{font-size:11px;color:var(--game-orange)}.countdown-digits i{color:var(--game-orange)}.countdown-labels{font-size:4px;color:#98a2b3}
     .compact-matchup{min-height:86px;margin:7px 0 2px;grid-template-columns:minmax(0,1fr) 58px minmax(0,1fr)}.compact-team-logo{width:52px;height:52px;flex-basis:52px}.compact-team b{font-size:11px}.compact-center strong{font-size:15px}.compact-center small{font-size:10px}.upcoming-compact-card{padding-top:14px;padding-bottom:13px}
     @media(max-width:380px){.home-hero-grid{min-height:142px}.home-identity,.weather-hero{height:142px;min-height:142px}.weather-icon-wrap{height:56px;flex-basis:56px}.weather-symbol{width:56px;height:56px}.eyebrow{margin-bottom:9px}.match-meeting,.countdown-digits{font-size:10px}.countdown-labels{font-size:3.7px}.compact-matchup{min-height:80px;grid-template-columns:minmax(0,1fr) 52px minmax(0,1fr)}.compact-team-logo{width:47px;height:47px;flex-basis:47px}.compact-team b{font-size:10px}.compact-center strong{font-size:14px}.compact-center small{font-size:9px}}
+    /* v56: top flip countdown, quieter graphite palette and tighter RSVP footer. */
+    .match-countdown-top{width:224px;max-width:78%;margin:4px auto 3px;display:grid;gap:5px;color:#343943;font-style:normal}
+    .match-countdown-top .countdown-digits{display:grid;grid-template-columns:42px 10px 42px 10px 42px 10px 42px;justify-content:center;align-items:center;width:100%;font-size:20px;line-height:1;font-weight:850;color:#343943;font-variant-numeric:tabular-nums}
+    .match-countdown-top .countdown-digits b{height:42px;border:1px solid #d7dce4;border-radius:8px;background:linear-gradient(180deg,#f7f8fa 0%,#fff 48%,#dfe3e9 49%,#f0f2f5 100%);box-shadow:0 5px 10px rgba(16,24,40,.13),inset 0 1px 0 #fff;display:grid;place-items:center;position:relative;text-align:center}
+    .match-countdown-top .countdown-digits b:after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#cbd1da;opacity:.8}
+    .match-countdown-top .countdown-digits i{color:#747b87;font:inherit;text-align:center}
+    .match-countdown-top .countdown-labels{display:grid;grid-template-columns:repeat(4,42px);justify-content:center;gap:20px;width:100%;color:#8b95a5;font-size:5px;line-height:1;text-transform:uppercase;letter-spacing:.04em}
+    .match-countdown-top .countdown-labels small{font:inherit;text-align:center}
+    .match-card .match-teams{margin:7px 0 8px}
+    .match-card .match-vs{gap:3px}
+    .match-card .match-meeting{color:var(--game-orange);font-weight:800}
+    .match-card .match-foot{padding-top:8px;min-height:43px}
+    .match-card .rsvp-summary{margin-top:0}
+    .match-card{padding-bottom:11px}
+    @media(max-width:380px){.match-countdown-top{width:204px;margin-top:3px}.match-countdown-top .countdown-digits{grid-template-columns:38px 9px 38px 9px 38px 9px 38px;font-size:18px}.match-countdown-top .countdown-digits b{height:38px}.match-countdown-top .countdown-labels{grid-template-columns:repeat(4,38px);gap:18px;font-size:4.5px}.match-card .match-foot{padding-top:7px}}
   </style>
 </head>
 <body>
@@ -548,7 +563,7 @@
           const people=confirmedPeople.filter(row=>row.player_id),faces=people.length?`<div class="match-faces">${people.slice(0,3).map(attendeeFace).join('')}${people.length>3?`<span class="face">+${people.length-3}</span>`:''}</div>`:'';
           const homeLabel=APP_STATE.language==='en'?'Home':'Heim',awayLabel=APP_STATE.language==='en'?'Away':'Gast';
           const meeting=meetingClock(game.meeting_time),countdownTarget=gameCountdownTarget(game);
-          return `<article class="match-card clickable-game-card" role="button" tabindex="0" onclick="openGameDetails('${game.id}')" onkeydown="${keyHandler}"><div class="match-top"><div class="match-kicker">${escapeHtml(gameListDate(game.starts_at))}</div>${status}</div><div class="match-teams"><div class="match-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="match-vs"><strong>${escapeHtml(gameClock(game.starts_at))}</strong><span class="match-vs-label">VS</span><small class="match-meeting">${APP_STATE.language==='en'?'Meet':'Treffzeit'} ${escapeHtml(meeting||'–')}</small><em class="match-countdown" data-game-countdown="${countdownTarget}" aria-label="${escapeHtml(gameCountdownText(countdownTarget))}">${gameCountdownMarkup(countdownTarget)}</em></div><div class="match-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div><div class="match-foot"><div class="attendance-inline">${faces}<span class="rsvp-summary">${escapeHtml(attendanceCountLabel(confirmedCount))}</span></div><div class="match-actions">${action}</div></div></article>`;
+          return `<article class="match-card clickable-game-card" role="button" tabindex="0" onclick="openGameDetails('${game.id}')" onkeydown="${keyHandler}"><div class="match-top"><div class="match-kicker">${escapeHtml(gameListDate(game.starts_at))}</div>${status}</div><em class="match-countdown-top" data-game-countdown="${countdownTarget}" aria-label="${escapeHtml(gameCountdownText(countdownTarget))}">${gameCountdownMarkup(countdownTarget)}</em><div class="match-teams"><div class="match-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="match-vs"><strong>${escapeHtml(gameClock(game.starts_at))}</strong><span class="match-vs-label">VS</span><small class="match-meeting">${APP_STATE.language==='en'?'Meet':'Treffzeit'} ${escapeHtml(meeting||'–')}</small></div><div class="match-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div><div class="match-foot"><div class="attendance-inline">${faces}<span class="rsvp-summary">${escapeHtml(attendanceCountLabel(confirmedCount))}</span></div><div class="match-actions">${action}</div></div></article>`;
         }).join('');
       }
       const latest=APP_STATE.games.map(x=>x.synced_at).filter(Boolean).sort().at(-1);
