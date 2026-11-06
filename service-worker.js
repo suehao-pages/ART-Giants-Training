@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v62-spin-layer';
+const CACHE_NAME = 'hoopslot-pwa-v63-profile-alert';
 const APP_SHELL = [
   './',
   './index.html',
