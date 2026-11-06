@@ -203,6 +203,55 @@
       .signup-hero{padding:20px 30px 22px;border-radius:0 0 26px 26px}
       .signup-hero:before{display:none}
     }
+    /* v69: quieter glass, visible ball texture and full-bleed safe-area headers. */
+    .signup-hero{
+      box-shadow:0 8px 18px rgba(20,66,158,.085);
+    }
+    .signup-fact,
+    .choice .secondary{
+      border:0;
+      background:
+        linear-gradient(112deg,rgba(225,240,255,.135),rgba(91,139,214,.075) 48%,rgba(18,62,155,.09)),
+        radial-gradient(ellipse at 6% 0%,rgba(255,255,255,.13),transparent 38%);
+      box-shadow:
+        inset 1px 1px 0 rgba(255,255,255,.22),
+        0 5px 14px rgba(7,37,107,.035);
+      -webkit-backdrop-filter:blur(8px) saturate(106%);
+      backdrop-filter:blur(8px) saturate(106%);
+    }
+    .signup-fact .trainer-avatar{
+      border-color:transparent;
+      box-shadow:inset 1px 1px 0 rgba(255,255,255,.18);
+    }
+    .signup-fact .copy-address{border:0}
+    @media(max-width:380px){
+      .signup-hero{
+        width:calc(100% + 24px);
+        margin-left:-12px;
+        margin-right:-12px;
+      }
+      .stats-dashboard{
+        margin-left:-12px;
+        margin-right:-12px;
+      }
+    }
+    @media(display-mode:standalone){
+      #screen-signup,#screen-statistics{padding-top:0!important}
+      #screen-signup .signup-hero{
+        padding-top:calc(22px + var(--safe-top));
+      }
+      #screen-statistics .stats-dashboard{
+        padding-top:calc(24px + var(--safe-top));
+      }
+    }
+    html.android-standalone #screen-signup,
+    html.android-standalone #screen-statistics{padding-top:0!important}
+    html.android-standalone #screen-signup .signup-hero{
+      padding-top:calc(22px + var(--safe-top));
+    }
+    html.android-standalone #screen-statistics .stats-dashboard{
+      padding-top:calc(24px + var(--safe-top));
+    }
   </style>
 </head>
 <body>

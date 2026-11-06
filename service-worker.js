@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v68-exact-hero';
+const CACHE_NAME = 'hoopslot-pwa-v69-glass-safearea';
 const APP_SHELL = [
   './',
   './index.html',
