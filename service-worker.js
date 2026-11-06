@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v66-training-glass';
+const CACHE_NAME = 'hoopslot-pwa-v68-exact-hero';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,6 +15,7 @@ const APP_SHELL = [
   './assets/basketball-trainer-v9.png',
   './assets/basketball-parent-v9.png',
   './assets/training-basketball-blue.png',
+  './assets/training-hero-background.webp',
   './assets/team-suedwest-baskets.png',
   './assets/team-osterather-tv.jpg',
   './assets/team-art-giants.png',
