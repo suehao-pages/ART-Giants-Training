@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v64-compact-stats';
+const CACHE_NAME = 'hoopslot-pwa-v65-delete-stats';
 const APP_SHELL = [
   './',
   './index.html',
