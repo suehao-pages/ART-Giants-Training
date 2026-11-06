@@ -154,6 +154,65 @@
     .stats-data-card{padding:16px 14px 10px}.stats-data-divider{height:1px;background:var(--line);margin:17px -2px 14px}.stats-list-title{font-size:13px;font-weight:750;color:var(--ink);margin:0 0 10px}.stats-table-head,.compact-stat-row{display:grid;grid-template-columns:minmax(65px,1.38fr) repeat(5,minmax(34px,.78fr)) 46px;column-gap:4px;align-items:center}.stats-table-head{padding:0 2px 7px;color:#98a2b3;font-size:7.5px;font-weight:750;text-align:center;text-transform:uppercase;letter-spacing:.015em}.stats-table-head span:first-child{text-align:left}.compact-stat-row{position:relative;padding:11px 2px;border-top:1px solid var(--line);min-height:58px}.compact-stat-row:first-child{border-top:0}.compact-stat-cell{min-width:0;text-align:center}.compact-stat-cell:first-child{text-align:left}.compact-stat-main{display:block;color:var(--ink);font-size:12px;font-weight:800;line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-stat-sub{display:block;margin-top:7px;color:#7c8798;font-size:7.5px;font-weight:650;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-stat-sub.above{color:#07845b}.compact-stat-sub.below{color:#c41f2a}.compact-stat-opponent{font-size:8px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.compact-stat-actions{display:flex;align-items:center;justify-content:flex-end;gap:0}.compact-stat-edit,.compact-stat-delete{width:23px;height:30px;padding:0;border:0;background:transparent;display:grid;place-items:center;border-radius:8px}.compact-stat-edit{color:#1746e0}.compact-stat-delete{color:#d0242f}.compact-stat-edit svg,.compact-stat-delete svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9}.compact-stat-edit:active{background:#edf2ff;transform:scale(.94)}.compact-stat-delete:active{background:#fff0f1;transform:scale(.94)}.stats-data-card .game-stat-empty{margin:5px 0 7px;padding:16px 6px}
     @media(max-width:350px){.stats-data-card{padding-inline:9px}.stats-table-head,.compact-stat-row{grid-template-columns:minmax(55px,1.25fr) repeat(5,minmax(27px,.7fr)) 42px;column-gap:2px}.stats-table-head{font-size:6.3px}.compact-stat-main{font-size:10.5px}.compact-stat-sub{font-size:6.5px}.compact-stat-edit,.compact-stat-delete{width:21px}}
     @media(prefers-reduced-motion:reduce){.training-shot-overlay{display:none}}
+    /* v66: full-width training hero with a soft blue sports surface and glass controls. */
+    .signup-hero{
+      width:calc(100% + 32px);
+      margin:0 -16px;
+      padding:22px 38px 24px;
+      border-radius:0 0 30px 30px;
+      background:
+        radial-gradient(ellipse at 18% 5%,rgba(101,170,255,.23) 0%,rgba(101,170,255,0) 44%),
+        linear-gradient(135deg,#2672ed 0%,#235fd7 43%,#1d54c7 69%,#1949b5 100%);
+      box-shadow:0 12px 28px rgba(20,66,158,.14);
+      position:relative;
+      isolation:isolate;
+      overflow:hidden;
+    }
+    .signup-hero:before{
+      content:"";
+      position:absolute;
+      z-index:-2;
+      width:300px;
+      height:300px;
+      right:-102px;
+      top:-35px;
+      background:url("./assets/training-basketball-blue.png") center/contain no-repeat;
+      opacity:.32;
+      filter:saturate(.82) brightness(1.1) contrast(.78);
+      pointer-events:none;
+    }
+    .signup-hero:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      z-index:-1;
+      background:linear-gradient(118deg,rgba(46,127,244,.08) 0%,rgba(25,73,181,.04) 54%,rgba(13,48,132,.12) 100%);
+      pointer-events:none;
+    }
+    .signup-hero>span,.signup-hero>h2,.signup-hero>p,.signup-hero>.signup-facts,.signup-hero>.choice{position:relative;z-index:1}
+    .signup-fact{
+      background:linear-gradient(135deg,rgba(12,52,139,.29),rgba(35,96,199,.18));
+      border:1px solid rgba(224,238,255,.3);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 7px 18px rgba(9,43,121,.08);
+      -webkit-backdrop-filter:blur(15px) saturate(112%);
+      backdrop-filter:blur(15px) saturate(112%);
+    }
+    .signup-fact span{color:#d2e1ff}
+    .signup-fact .trainer-avatar{background:rgba(222,235,255,.13);border-color:rgba(255,255,255,.26)}
+    .signup-fact .copy-address{background:rgba(221,235,255,.14);border:1px solid rgba(255,255,255,.08)}
+    .choice .secondary{
+      background:linear-gradient(135deg,rgba(12,52,139,.3),rgba(37,98,200,.18));
+      color:#fff;
+      border:1px solid rgba(225,239,255,.38);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 7px 18px rgba(9,43,121,.08);
+      -webkit-backdrop-filter:blur(15px) saturate(112%);
+      backdrop-filter:blur(15px) saturate(112%);
+    }
+    .choice .secondary:active{background:rgba(19,63,158,.4)}
+    @media(max-width:380px){
+      .signup-hero{padding:20px 30px 22px;border-radius:0 0 26px 26px}
+      .signup-hero:before{width:270px;height:270px;right:-105px;top:-22px;opacity:.29}
+    }
   </style>
 </head>
 <body>
