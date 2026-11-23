@@ -252,6 +252,7 @@
     html.android-standalone #screen-statistics .stats-dashboard{
       padding-top:calc(24px + var(--safe-top));
     }
+    .season-phase-tabs{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:13px;padding:4px;margin:-5px 0 14px}.season-phase-tabs.visible{display:grid}.season-phase-tab{border:0;border-radius:9px;background:transparent;color:#cfdbec;padding:9px 7px;font-size:11px;font-weight:700}.season-phase-tab.active{background:rgba(255,255,255,.94);color:#17233a;box-shadow:0 3px 9px rgba(5,15,32,.16)}
   </style>
 </head>
 <body>
@@ -299,6 +300,10 @@
           <button class="games-tab active" data-game-tab="upcoming" role="tab" aria-selected="true" data-i18n="upcoming">Kommende Spiele</button>
           <button class="games-tab" data-game-tab="finished" role="tab" aria-selected="false" data-i18n="results">Letzte Spiele</button>
           <button class="games-tab" data-game-tab="standings" role="tab" aria-selected="false" data-i18n="standings">Tabelle</button>
+        </div>
+        <div class="season-phase-tabs" id="seasonPhaseTabs" role="tablist" aria-label="Saisonphase">
+          <button class="season-phase-tab" data-season-phase="preseason" role="tab" aria-selected="false">Vorrunde</button>
+          <button class="season-phase-tab active" data-season-phase="playoffs" role="tab" aria-selected="true">Hauptrunde</button>
         </div>
         <div id="gamesList"><div class="games-loading">Spiele werden geladen …</div></div>
         <p class="sync-note" id="gamesSyncNote"></p>
@@ -381,6 +386,7 @@
       calendarExpanded: false,
       calendarMonth: null,
       gamesTab: "upcoming",
+      gamesPhase: "playoffs",
       games: [],
       standings: [],
       gameRsvps: [],
@@ -535,29 +541,50 @@
     const KORBFIEBER_TEAM_URL='https://korbfieber.de/mannschaft/art-giants-u10-3-mix/';
     const OUR_GAME_TEAM='SG ART Giants Düsseldorf 3';
     const TEAM_LOGOS={
-      suedwest:'./assets/team-suedwest-baskets.png',osterath:'./assets/team-osterather-tv.jpg',artGiants:'./assets/team-art-giants.png',tusa:'./assets/team-djk-tusa.svg',tg:'./assets/team-tg-duesseldorf.png',isd:'./assets/team-isd-sportverein.png',art:'./assets/team-art-duesseldorf.webp'
+      suedwest:'./assets/team-suedwest-baskets.png',osterath:'./assets/team-osterather-tv.jpg',artGiants:'./assets/team-art-giants.png',tusa:'./assets/team-djk-tusa.svg',tg:'./assets/team-tg-duesseldorf.png',isd:'./assets/team-isd-sportverein.png',art:'./assets/team-art-duesseldorf.webp',norf:'./assets/team-tsv-norf.jpg',dormagen:'./assets/team-tsv-bayer-dormagen.png',urdenbach:'./assets/team-tsv-urdenbach.png'
     };
-    function teamLogoUrl(name){const team=String(name||'');if(/SG ART Giants Düsseldorf/i.test(team))return TEAM_LOGOS.artGiants;if(/Südwest Baskets Wuppertal/i.test(team))return TEAM_LOGOS.suedwest;if(/Osterather TV/i.test(team))return TEAM_LOGOS.osterath;if(/DJK TUSA Düsseldorf/i.test(team))return TEAM_LOGOS.tusa;if(/^TG Düsseldorf/i.test(team))return TEAM_LOGOS.tg;if(/ISD Sportverein/i.test(team))return TEAM_LOGOS.isd;if(/^ART Düsseldorf$/i.test(team.trim()))return TEAM_LOGOS.art;return TEAM_LOGOS.artGiants}
+    function teamLogoUrl(name){const team=String(name||'');if(/SG ART Giants Düsseldorf/i.test(team))return TEAM_LOGOS.artGiants;if(/Südwest Baskets Wuppertal/i.test(team))return TEAM_LOGOS.suedwest;if(/Osterather TV/i.test(team))return TEAM_LOGOS.osterath;if(/DJK TUSA Düsseldorf/i.test(team))return TEAM_LOGOS.tusa;if(/^TG Düsseldorf/i.test(team))return TEAM_LOGOS.tg;if(/ISD Sportverein/i.test(team))return TEAM_LOGOS.isd;if(/TSV Norf/i.test(team))return TEAM_LOGOS.norf;if(/TSV Bayer Dormagen/i.test(team))return TEAM_LOGOS.dormagen;if(/TSV Urdenbach/i.test(team))return TEAM_LOGOS.urdenbach;if(/^ART Düsseldorf$/i.test(team.trim()))return TEAM_LOGOS.art;return TEAM_LOGOS.artGiants}
     function teamLogoMarkup(name,className='team-logo'){return `<img class="${className}" src="${teamLogoUrl(name)}" alt="" aria-hidden="true">`}
     function teamLogoWithStamp(name,stamp=''){return `<div class="team-logo-wrap">${teamLogoMarkup(name)}${stamp}</div>`}
     function resultSideClass(game,side){if(game.status!=='finished')return'';const home=Number(game.home_score),away=Number(game.away_score);if(home===away)return'draw';const won=side==='home'?home>away:away>home;return won?'winner':'loser'}
     function resultStampMarkup(game,side){return resultSideClass(game,side)==='winner'?'<span class="result-stamp win" aria-label="Winner">WINNER</span>':''}
     const DEMO_GAMES=[
-      {id:'demo-2894406',status:'upcoming',registration_open:false,meeting_time:'09:15:00',starts_at:'2026-11-08T10:00:00',home_team:'ART Düsseldorf',away_team:OUR_GAME_TEAM,league:'Kreisliga U10o DNE + W Gr. A',source_url:'https://korbfieber.de/spiel/2894406/'},
+      {id:'main-20261208',status:'upcoming',registration_open:false,starts_at:'2026-12-08T00:00:00',home_team:OUR_GAME_TEAM,away_team:'TG Düsseldorf 2',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270107',status:'upcoming',registration_open:false,starts_at:'2027-01-07T00:00:00',home_team:OUR_GAME_TEAM,away_team:'TSV Urdenbach',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270111',status:'upcoming',registration_open:false,starts_at:'2027-01-11T00:00:00',home_team:'TSV Bayer Dormagen',away_team:OUR_GAME_TEAM,league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270118',status:'upcoming',registration_open:false,starts_at:'2027-01-18T00:00:00',home_team:OUR_GAME_TEAM,away_team:'ISD Sportverein',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270125',status:'upcoming',registration_open:false,starts_at:'2027-01-25T00:00:00',home_team:'TSV Norf',away_team:OUR_GAME_TEAM,league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270201',status:'upcoming',registration_open:false,starts_at:'2027-02-01T00:00:00',home_team:OUR_GAME_TEAM,away_team:'Südwest Baskets Wuppertal',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270208',status:'upcoming',registration_open:false,starts_at:'2027-02-08T00:00:00',home_team:'TG Düsseldorf 2',away_team:OUR_GAME_TEAM,league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270215',status:'upcoming',registration_open:false,starts_at:'2027-02-15T00:00:00',home_team:OUR_GAME_TEAM,away_team:'Osterather TV 3',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270222',status:'upcoming',registration_open:false,starts_at:'2027-02-22T00:00:00',home_team:'TSV Urdenbach',away_team:OUR_GAME_TEAM,league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270301',status:'upcoming',registration_open:false,starts_at:'2027-03-01T00:00:00',home_team:OUR_GAME_TEAM,away_team:'TSV Bayer Dormagen',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20270315',status:'upcoming',registration_open:false,starts_at:'2027-03-15T00:00:00',home_team:OUR_GAME_TEAM,away_team:'TSV Norf',league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
+      {id:'main-20261121',status:'finished',starts_at:'2026-11-21T14:00:00',home_team:'Osterather TV 3',away_team:OUR_GAME_TEAM,home_score:37,away_score:42,league:'1. Kreisliga U10o DNE+W',season_phase:'playoffs'},
       {id:'demo-2894404',status:'finished',starts_at:'2026-10-11T12:00:00',home_team:'DJK TUSA Düsseldorf 2',away_team:OUR_GAME_TEAM,home_score:49,away_score:52,league:'Kreisliga U10o DNE + W Gr. A',source_url:'https://korbfieber.de/spiel/2894404/'},
       {id:'demo-2894399',status:'finished',starts_at:'2026-10-04T10:00:00',home_team:OUR_GAME_TEAM,away_team:'TG Düsseldorf 3',home_score:46,away_score:11,league:'Kreisliga U10o DNE + W Gr. A',source_url:'https://korbfieber.de/spiel/2894399/'},
       {id:'demo-2894394',status:'finished',starts_at:'2026-09-26T10:00:00',home_team:'Südwest Baskets Wuppertal',away_team:OUR_GAME_TEAM,home_score:133,away_score:22,league:'Kreisliga U10o DNE + W Gr. A',source_url:'https://korbfieber.de/spiel/2894394/'},
       {id:'demo-2894391',status:'finished',starts_at:'2026-09-20T14:00:00',home_team:OUR_GAME_TEAM,away_team:'SG ART Giants Düsseldorf 4',home_score:85,away_score:14,league:'Kreisliga U10o DNE + W Gr. A',source_url:'https://korbfieber.de/spiel/2894391/'}
     ];
     const DEMO_STANDINGS=[
-      {position:1,team:'Südwest Baskets Wuppertal',played:3,wins:3,losses:0,points:6,basket_diff:283},
-      {position:2,team:'TG Düsseldorf 3',played:1,wins:1,losses:0,points:2,basket_diff:71},
-      {position:3,team:'Osterather TV 3',played:1,wins:1,losses:0,points:2,basket_diff:33},
-      {position:4,team:OUR_GAME_TEAM,played:2,wins:1,losses:1,points:2,basket_diff:-40},
-      {position:5,team:'ISD Sportverein',played:1,wins:0,losses:1,points:0,basket_diff:-54},
-      {position:6,team:'SG ART Giants Düsseldorf 4',played:1,wins:0,losses:1,points:0,basket_diff:-71},
-      {position:7,team:'DJK TUSA Düsseldorf 2',played:1,wins:0,losses:1,points:0,basket_diff:-118},
-      {position:8,team:'ART Düsseldorf',played:2,wins:0,losses:2,points:0,basket_diff:-104}
+      {position:1,team:'Südwest Baskets Wuppertal',played:7,wins:7,losses:0,points:14,basket_diff:539},
+      {position:2,team:OUR_GAME_TEAM,played:7,wins:5,losses:2,points:10,basket_diff:33},
+      {position:3,team:'Osterather TV 3',played:7,wins:5,losses:2,points:10,basket_diff:54},
+      {position:4,team:'ISD Sportverein',played:7,wins:4,losses:3,points:8,basket_diff:-4},
+      {position:5,team:'TG Düsseldorf 3',played:7,wins:3,losses:4,points:6,basket_diff:61},
+      {position:6,team:'DJK TUSA Düsseldorf 2',played:7,wins:2,losses:5,points:4,basket_diff:-136},
+      {position:7,team:'SG ART Giants Düsseldorf 4',played:7,wins:2,losses:5,points:3,basket_diff:-173},
+      {position:8,team:'ART Düsseldorf',played:7,wins:0,losses:7,points:0,basket_diff:-374}
+    ];
+    const PLAYOFF_STANDINGS=[
+      {position:1,team:'Südwest Baskets Wuppertal',played:3,wins:3,losses:0,points:6,basket_diff:230,season_phase:'playoffs'},
+      {position:2,team:'TSV Norf',played:3,wins:3,losses:0,points:6,basket_diff:58,season_phase:'playoffs'},
+      {position:3,team:'TG Düsseldorf 2',played:3,wins:2,losses:1,points:3,basket_diff:171,season_phase:'playoffs'},
+      {position:4,team:'Osterather TV 3',played:3,wins:1,losses:2,points:2,basket_diff:-57,season_phase:'playoffs'},
+      {position:5,team:OUR_GAME_TEAM,played:3,wins:1,losses:2,points:2,basket_diff:-111,season_phase:'playoffs'},
+      {position:6,team:'ISD Sportverein',played:3,wins:1,losses:2,points:2,basket_diff:-62,season_phase:'playoffs'},
+      {position:7,team:'TSV Bayer Dormagen',played:3,wins:1,losses:2,points:2,basket_diff:-43,season_phase:'playoffs'},
+      {position:8,team:'TSV Urdenbach',played:3,wins:0,losses:3,points:-1,basket_diff:-186,season_phase:'playoffs'}
     ];
     const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
     const profileInitials=()=>String(APP_STATE.profile.name||APP_STATE.accountName||'AG').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase();
@@ -657,22 +684,26 @@
         $('#gamesSyncNote').innerHTML='<a href="'+KORBFIEBER_TEAM_URL+'" target="_blank" rel="noopener">Spielplan direkt bei Korbfieber öffnen ↗</a>';
         return;
       }
-      APP_STATE.games=gamesResult.data||[];APP_STATE.gameRsvps=rsvpResult.data||[];APP_STATE.standings=standingsResult.data||[];APP_STATE.gameAttendees=attendeesResult.error?[]:(attendeesResult.data||[]);APP_STATE.gamesLoaded=true;renderGames();
+      const syncedGames=gamesResult.data||[],syncedKeys=new Set(syncedGames.map(game=>[game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|'))),playoffFallback=DEMO_GAMES.filter(game=>game.season_phase==='playoffs'&&!syncedKeys.has([game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|')));APP_STATE.games=[...syncedGames,...playoffFallback];APP_STATE.gameRsvps=rsvpResult.data||[];APP_STATE.standings=standingsResult.data||[];APP_STATE.gameAttendees=attendeesResult.error?[]:(attendeesResult.data||[]);APP_STATE.gamesLoaded=true;renderGames();
     }
     function resultFor(game){
       if(game.home_score===game.away_score)return ['Unentschieden','draw'];
       const oursHome=game.home_team===OUR_GAME_TEAM,oursWon=oursHome?game.home_score>game.away_score:game.away_score>game.home_score;
       return oursWon?['Sieg','win']:['Niederlage','loss'];
     }
+    const seasonPhaseForGame=game=>game.season_phase||(/^1\.\s*Kreisliga/i.test(String(game.league||''))?'playoffs':'preseason');
     function renderGames(){
       const list=$('#gamesList');if(!list)return;
-      const leagueLabel=APP_STATE.games.find(game=>game.league)?.league||'U10-3';if($('#gamesLeagueLabel'))$('#gamesLeagueLabel').textContent=leagueLabel;
+      const phaseTabs=$('#seasonPhaseTabs'),showPhaseTabs=['finished','standings'].includes(APP_STATE.gamesTab);phaseTabs.classList.toggle('visible',showPhaseTabs);
+      $$('.season-phase-tab').forEach(button=>{const active=button.dataset.seasonPhase===APP_STATE.gamesPhase;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active))});
+      const phaseGames=APP_STATE.games.filter(game=>seasonPhaseForGame(game)===APP_STATE.gamesPhase),leagueLabel=(APP_STATE.gamesTab==='upcoming'?APP_STATE.games.find(game=>game.status==='upcoming'&&game.league):phaseGames.find(game=>game.league))?.league||'U10-3';if($('#gamesLeagueLabel'))$('#gamesLeagueLabel').textContent=leagueLabel;
       $$('.games-tab').forEach(button=>{const active=button.dataset.gameTab===APP_STATE.gamesTab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active))});
       if(APP_STATE.gamesTab==='standings'){
+        APP_STATE.standings=APP_STATE.gamesPhase==='playoffs'?PLAYOFF_STANDINGS:DEMO_STANDINGS;
         const rows=APP_STATE.standings.slice().sort((a,b)=>a.position-b.position);list.innerHTML=rows.length?`<div class="standings-card"><div class="standings-caption">${t('seasonTable')}</div><div class="standings-wrap"><table class="standings-table"><thead><tr><th>${t('rank')}</th><th aria-label="Logo"></th><th>${t('teamLabel')}</th><th>${t('played')}</th><th>${t('wins')}</th><th>${t('losses')}</th><th>${t('pointsShort')}</th><th>${t('baskets')}</th></tr></thead><tbody>${rows.map(row=>`<tr class="${row.team===OUR_GAME_TEAM?'ours':''}"><td><span class="rank-badge">${Number(row.position)}</span></td><td>${teamLogoMarkup(row.team,'standings-logo')}</td><td>${escapeHtml(row.team)}</td><td>${Number(row.played)}</td><td>${Number(row.wins)}</td><td>${Number(row.losses)}</td><td>${Number(row.points)}</td><td>${Number(row.basket_diff)>0?'+':''}${Number(row.basket_diff)}</td></tr>`).join('')}</tbody></table></div></div>`:`<div class="empty"><b>${APP_STATE.language==='en'?'Standings are not available yet.':'Die Tabelle ist noch nicht verfügbar.'}</b><br>${APP_STATE.language==='en'?'Run the new synchronization once.':'Führe die neue Synchronisierung einmal aus.'}</div>`;const latest=rows.map(row=>row.synced_at).filter(Boolean).sort().at(-1);$('#gamesSyncNote').innerHTML=latest?`${t('lastUpdated')}: ${escapeHtml(new Intl.DateTimeFormat(locale(),{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).format(new Date(latest)))} · <a href="${KORBFIEBER_TEAM_URL}" target="_blank" rel="noopener">${t('source')}</a>`:`${t('previewSource')} <a href="${KORBFIEBER_TEAM_URL}" target="_blank" rel="noopener">Korbfieber</a>`;return;
       }
       const upcoming=APP_STATE.gamesTab==='upcoming';
-      const games=APP_STATE.games.filter(x=>upcoming?x.status==='upcoming':x.status==='finished').sort((a,b)=>upcoming?new Date(a.starts_at)-new Date(b.starts_at):new Date(b.starts_at)-new Date(a.starts_at));
+      const games=APP_STATE.games.filter(x=>upcoming?x.status==='upcoming':x.status==='finished'&&seasonPhaseForGame(x)===APP_STATE.gamesPhase).sort((a,b)=>upcoming?new Date(a.starts_at)-new Date(b.starts_at):new Date(b.starts_at)-new Date(a.starts_at));
       if(!games.length){list.innerHTML=`<div class="empty"><b>${upcoming?(APP_STATE.language==='en'?'No upcoming games':'Keine kommenden Spiele'):(APP_STATE.language==='en'?'No recent games yet':'Noch keine letzten Spiele')}</b><br>${db?(APP_STATE.language==='en'?'The next synchronization will update this view.':'Die nächste Synchronisierung aktualisiert diese Ansicht.'):(APP_STATE.language==='en'?'Data appears after Supabase setup.':'Nach der Supabase-Einrichtung erscheinen die Daten automatisch.')}</div>`;$('#gamesSyncNote').textContent='';return}
       const coach=['trainer','admin'].includes(APP_STATE.role);
       if(!upcoming){
@@ -926,6 +957,7 @@
     }
     $$('.navitem[data-screen]').forEach(button=>bindFastNavTap(button,()=>nav(button.dataset.screen)));bindFastNavTap($('#quickAction'),bounceQuickAction);$$('[data-nav]').forEach(b=>b.onclick=()=>nav(b.dataset.nav));
     $$('.games-tab').forEach(button=>button.onclick=()=>{APP_STATE.gamesTab=button.dataset.gameTab;renderGames()});
+    $$('.season-phase-tab').forEach(button=>button.onclick=()=>{APP_STATE.gamesPhase=button.dataset.seasonPhase;renderGames()});
     $('#openRegistration').onclick=openRegistration;
     $('#openPasswordRecovery').onclick=openPasswordRecovery;
     function openPasswordRecovery(){

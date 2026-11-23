@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v69-glass-safearea';
+const CACHE_NAME = 'hoopslot-pwa-v70-playoffs';
 const APP_SHELL = [
   './',
   './index.html',
@@ -23,6 +23,9 @@ const APP_SHELL = [
   './assets/team-tg-duesseldorf.png',
   './assets/team-isd-sportverein.png',
   './assets/team-art-duesseldorf.webp',
+  './assets/team-tsv-norf.jpg',
+  './assets/team-tsv-bayer-dormagen.png',
+  './assets/team-tsv-urdenbach.png',
   './apple-touch-icon.png',
   './apple-touch-icon-precomposed.png'
 ];
