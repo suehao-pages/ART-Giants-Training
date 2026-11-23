@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v78-centered-match';
+const CACHE_NAME = 'hoopslot-pwa-v79-game-realtime';
 const APP_SHELL = [
   './',
   './index.html',

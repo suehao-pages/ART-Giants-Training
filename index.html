@@ -753,22 +753,65 @@
       if(!db||trainingChannel)return;
       trainingChannel=db.channel('u10-3-training-updates').on('postgres_changes',{event:'*',schema:'public',table:'trainings'},()=>loadTrainings(true)).on('postgres_changes',{event:'*',schema:'public',table:'attendance'},()=>loadTrainings(true)).on('postgres_changes',{event:'*',schema:'public',table:'training_breaks'},()=>loadTrainings(true)).subscribe();
     }
-    async function loadGames(force=false){
+    let gameChannel=null,gameSyncTimer=null,gameLoadVersion=0;
+    function queueGamesSync(){
+      if(!db||!APP_STATE.userId||!gameChannel||gameSyncTimer!==null)return;
+      const channel=gameChannel;
+      gameSyncTimer=setTimeout(()=>{
+        gameSyncTimer=null;
+        if(gameChannel===channel&&APP_STATE.userId)loadGames(true,{quiet:true});
+      },120);
+    }
+    function subscribeGames(){
+      if(!db||!APP_STATE.userId||gameChannel)return;
+      const channel=db.channel('u10-3-game-updates');
+      gameChannel=channel;
+      channel.on('postgres_changes',{event:'UPDATE',schema:'public',table:'games'},()=>{
+        if(gameChannel===channel)queueGamesSync();
+      }).subscribe(status=>{
+        // Also fetch once after joining/rejoining to recover changes made while disconnected.
+        if(gameChannel===channel&&status==='SUBSCRIBED')queueGamesSync();
+      });
+    }
+    function stopGamesSync(){
+      clearTimeout(gameSyncTimer);gameSyncTimer=null;gameLoadVersion++;
+      const channel=gameChannel;gameChannel=null;
+      if(db&&channel)void db.removeChannel(channel);
+    }
+    function refreshOpenGameDetails(previousGames){
+      const overlay=$('#modalOverlay'),id=overlay.dataset.gameDetailId;
+      if(!id||overlay.classList.contains('hidden'))return;
+      const game=APP_STATE.games.find(row=>String(row.id)===id),previous=previousGames.find(row=>String(row.id)===id);
+      if(!game){closeModal();return}
+      const keys=['status','registration_open','starts_at','meeting_date','meeting_time','venue_name','venue_address','home_team','away_team'];
+      if(previous&&keys.every(key=>game[key]===previous[key]))return;
+      const modal=$('#modal'),scroll=modal.scrollTop;
+      openGameDetails(game.id);
+      modal.scrollTop=scroll;
+    }
+    async function loadGames(force=false,{quiet=false}={}){
       if(APP_STATE.gamesLoaded&&!force){renderGames();return}
-      const list=$('#gamesList');list.innerHTML='<div class="games-loading">Spiele werden geladen …</div>';
+      const list=$('#gamesList');
+      if(!quiet&&!APP_STATE.gamesLoaded)list.innerHTML='<div class="games-loading">Spiele werden geladen …</div>';
       if(!db){APP_STATE.games=DEMO_GAMES;APP_STATE.standings=DEMO_STANDINGS;APP_STATE.gameRsvps=JSON.parse(localStorage.getItem('ag-demo-game-rsvps')||'[]');APP_STATE.gameAttendees=APP_STATE.gameRsvps.map(row=>({...row,player_id:'demo-player',first_name:APP_STATE.profile.name||APP_STATE.accountName,avatar_url:avatarImage()}));APP_STATE.gamesLoaded=true;renderGames();return}
+      const version=++gameLoadVersion,userId=APP_STATE.userId;
       const [gamesResult,rsvpResult,standingsResult,attendeesResult]=await Promise.all([
         db.from('games').select('*').order('starts_at',{ascending:true}),
         db.from('game_rsvps').select('game_id,user_id,status,note,updated_at'),
         db.from('game_standings').select('*').order('position',{ascending:true}),
         db.rpc('list_game_attendees')
       ]);
+      if(version!==gameLoadVersion||userId!==APP_STATE.userId)return;
       if(gamesResult.error){
+        if(quiet)return;
         list.innerHTML='<div class="empty"><b>Spiele konnten noch nicht geladen werden.</b><br>Bitte zuerst die Spiele-Datenbank und Synchronisierung einrichten.</div>';
         $('#gamesSyncNote').innerHTML='<a href="'+KORBFIEBER_TEAM_URL+'" target="_blank" rel="noopener">Spielplan direkt bei Korbfieber öffnen ↗</a>';
         return;
       }
+      const previousGames=APP_STATE.games;
       const syncedGames=gamesResult.data||[],syncedKeys=new Set(syncedGames.map(game=>[game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|'))),playoffFallback=DEMO_GAMES.filter(game=>game.season_phase==='playoffs'&&!syncedKeys.has([game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|')));APP_STATE.games=[...syncedGames,...playoffFallback];APP_STATE.gameRsvps=rsvpResult.data||[];APP_STATE.standings=standingsResult.data||[];APP_STATE.gameAttendees=attendeesResult.error?[]:(attendeesResult.data||[]);APP_STATE.gamesLoaded=true;renderGames();
+      refreshOpenGameDetails(previousGames);
+      if(APP_STATE.currentScreen==='training')renderCalendar();
     }
     function resultFor(game){
       if(game.home_score===game.away_score)return ['Unentschieden','draw'];
@@ -820,7 +863,7 @@
       const mine=rsvpFor(game.id),registrationOpen=game.registration_open===true,isUpcoming=game.status==='upcoming',coachAction=isUpcoming?`<button class="${registrationOpen?'danger':'primary'}" onclick="requestToggleGameRegistration('${game.id}')">${registrationOpen?t('cancelPractice'):t('confirmPractice')}</button>`:'',parentAction=isUpcoming?`<button class="${mine?.status==='yes'?'danger':'primary'}" ${registrationOpen?'':'disabled'} onclick="openGameRsvp('${game.id}')">${registrationOpen?(mine?.status==='yes'?t('cancelAttendance'):t('participate')):t('confirmationOpen')}</button>`:'',detailAction=coach?coachAction:parentAction,primaryActions=[detailAction,route].filter(Boolean).join(''),primaryActionsClass=detailAction&&route?'detail-primary-actions':'detail-primary-actions single';
       const meetingAction=coach?`<button class="detail-edit" type="button" onclick="openMeetingTimeEditor('${game.id}')" aria-label="${en?'Edit meeting time':'Treffzeit bearbeiten'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-1 5 5-1L19 9l-4-4zM13 7l4 4"/></svg></button>`:'<span class="detail-edit-spacer" aria-hidden="true"></span>';
       const calendarAction=game.status==='upcoming'?`<button class="secondary" type="button" onclick="addGameToCalendar('${game.id}')" aria-label="${en?'Add to calendar':'Zum Kalender hinzufügen'}">${en?'Calendar':'Kalender'}</button>`:'';
-      showModal(`<div class="game-detail-head"><h2>${en?'Game overview':'Spielübersicht'}</h2><div class="game-detail-matchup"><div class="game-detail-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="game-detail-vs">VS</div><div class="game-detail-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div></div><div class="detail-list"><div class="detail-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="detail-copy"><div class="detail-label">${en?'Game time':'Spielzeit'}</div><div class="detail-value">${escapeHtml(gameDate(game.starts_at))}</div></div></div><div class="detail-row meeting-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2M4.5 5.5 7 3M19.5 5.5 17 3"/></svg><div class="detail-copy"><div class="detail-label">${en?'Meeting time':'Treffzeit'}</div><div class="detail-value">${escapeHtml(meeting|| (en?'Not set yet':'Noch nicht festgelegt'))}</div></div>${meetingAction}</div><div class="detail-row"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg><div class="detail-copy"><div class="detail-label">${t('location')}</div><div class="detail-value">${escapeHtml(venueName)}</div><div class="venue-address address-line"><span>${escapeHtml(venueAddress)}</span>${copyAddressMarkup(venueAddress)}</div></div></div></div>${primaryActions?`<div class="${primaryActionsClass}">${primaryActions}</div>`:''}<div class="section-head"><h2>${t('attendances')}</h2></div>${attendees||`<div class="empty">${t('noResponse')}</div>`}<div class="modal-actions">${calendarAction}<button class="ghost" onclick="closeModal()">${t('close')}</button></div>`);
+      showModal(`<div class="game-detail-head"><h2>${en?'Game overview':'Spielübersicht'}</h2><div class="game-detail-matchup"><div class="game-detail-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="game-detail-vs">VS</div><div class="game-detail-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div></div><div class="detail-list"><div class="detail-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="detail-copy"><div class="detail-label">${en?'Game time':'Spielzeit'}</div><div class="detail-value">${escapeHtml(gameDate(game.starts_at))}</div></div></div><div class="detail-row meeting-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2M4.5 5.5 7 3M19.5 5.5 17 3"/></svg><div class="detail-copy"><div class="detail-label">${en?'Meeting time':'Treffzeit'}</div><div class="detail-value">${escapeHtml(meeting|| (en?'Not set yet':'Noch nicht festgelegt'))}</div></div>${meetingAction}</div><div class="detail-row"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg><div class="detail-copy"><div class="detail-label">${t('location')}</div><div class="detail-value">${escapeHtml(venueName)}</div><div class="venue-address address-line"><span>${escapeHtml(venueAddress)}</span>${copyAddressMarkup(venueAddress)}</div></div></div></div>${primaryActions?`<div class="${primaryActionsClass}">${primaryActions}</div>`:''}<div class="section-head"><h2>${t('attendances')}</h2></div>${attendees||`<div class="empty">${t('noResponse')}</div>`}<div class="modal-actions">${calendarAction}<button class="ghost" onclick="closeModal()">${t('close')}</button></div>`,false,gameId);
     }
     function icsEscape(value){return String(value||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}
     function icsLocalStamp(value){const match=String(value||'').match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);return match?`${match[1]}${match[2]}${match[3]}T${match[4]}${match[5]}00`:''}
@@ -961,8 +1004,16 @@
     function endedTrainingFeedback(){toast(APP_STATE.language==='en'?'This training session has already ended. Please check the latest training schedule.':'Dieses Training ist bereits beendet. Bitte sieh dir den aktuellen Trainingsplan an.')}
     function requestCancelAttendance(id){if(trainingHasEnded(id)){endedTrainingFeedback();return}showModal(`<h2>${APP_STATE.language==='en'?'Cancel attendance?':'Teilnahme wirklich absagen?'}</h2><div class="warning-box">${APP_STATE.language==='en'?'Your saved confirmation for this practice will be deleted. You can register again later while coach confirmation remains active.':'Deine gespeicherte Zusage für dieses Training wird gelöscht. Solange die Trainerfreigabe aktiv ist, kannst du dich später erneut anmelden.'}</div><div class="modal-actions"><button class="ghost" onclick="closeModal()">${APP_STATE.language==='en'?'Keep attendance':'Zusage behalten'}</button><button class="danger" onclick="cancelTrainingAttendance('${id}')">${t('cancelAttendance')}</button></div>`)}
     async function cancelTrainingAttendance(id){if(trainingHasEnded(id)){closeModal(true);endedTrainingFeedback();return}if(db){if(!APP_STATE.currentPlayerId)return;const {error}=await db.from('attendance').delete().eq('training_id',id).eq('player_id',APP_STATE.currentPlayerId);if(error){toast(APP_STATE.language==='en'?'Attendance could not be cancelled.':'Teilnahme konnte nicht abgesagt werden.');return}await loadTrainings(true)}else{const ids=JSON.parse(localStorage.getItem('ag-demo-training-rsvps')||'[]').map(String).filter(value=>value!==String(id));localStorage.setItem('ag-demo-training-rsvps',JSON.stringify(ids));APP_STATE.trainingRsvps=APP_STATE.trainingRsvps.filter(row=>!(String(row.training_id)===String(id)&&String(row.player_id)===String(APP_STATE.currentPlayerId)));render()}closeModal(true);toast(APP_STATE.language==='en'?'Attendance cancelled':'Teilnahme wurde abgesagt')}
-    function showModal(html,locked=false){$("#modal").innerHTML=html;$("#modalOverlay").dataset.locked=locked?'true':'false';$("#modalOverlay").classList.remove('hidden');bindDateInputs()}
-    function closeModal(force=false){if($("#modalOverlay").dataset.locked==='true'&&!force)return;$("#modalOverlay").classList.add('hidden');$("#modalOverlay").dataset.locked='false'}
+    function showModal(html,locked=false,gameDetailId=null){
+      const overlay=$('#modalOverlay');
+      if(gameDetailId===null)delete overlay.dataset.gameDetailId;
+      else overlay.dataset.gameDetailId=String(gameDetailId);
+      $('#modal').innerHTML=html;overlay.dataset.locked=locked?'true':'false';overlay.classList.remove('hidden');bindDateInputs();
+    }
+    function closeModal(force=false){
+      const overlay=$('#modalOverlay');if(overlay.dataset.locked==='true'&&!force)return;
+      overlay.classList.add('hidden');overlay.dataset.locked='false';delete overlay.dataset.gameDetailId;
+    }
     const venueOptions=selected=>APP_STATE.venues.map(v=>`<option value="${escapeHtml(v.code)}" ${v.code===selected?'selected':''}>${escapeHtml(v.code)} · ${escapeHtml(v.name)}</option>`).join('');
     let PENDING_SINGLE_TRAINING=null,PENDING_SERIES_CORRECTION=null;
     function openSingleTrainingEditor(id){
@@ -1122,7 +1173,7 @@
       if(profileError){await db.auth.signOut();toast('Für dieses Konto fehlt noch ein Profil');submit.disabled=false;submit.textContent='Anmelden';return}
       if(profile.approval_status!=='approved'){submit.disabled=false;submit.textContent='Anmelden';await showPendingApproval();return}
       resetPersonalState(profile.display_name||'');APP_STATE.userId=data.user.id;APP_STATE.currentEmail=data.user.email||'';APP_STATE.gamesLoaded=false;
-      setRole(profile.role,profile.display_name);await loadPlayerProfile();await loadTrainings(true);await refreshApprovalBadge();subscribeTrainings();submit.disabled=false;submit.textContent='Anmelden';
+      setRole(profile.role,profile.display_name);await loadPlayerProfile();await loadTrainings(true);await refreshApprovalBadge();subscribeTrainings();subscribeGames();submit.disabled=false;submit.textContent='Anmelden';
     };
     $('#quickSignup').onclick=()=>{const s=nextSession();if(s)(hasTrainingRsvp(s.id)?requestCancelAttendance(s.id):join(s.id))};
     $('#confirmTraining').onclick=()=>{const s=nextSession();if(s)(s.status==='confirmed'?requestCancelTraining(s.id):confirmTrainingById(s.id))};$('#editTraining').onclick=()=>openSingleTrainingEditor();$('#batchEdit').onclick=()=>openTrainingManagement();
@@ -1276,7 +1327,7 @@
       const ref=SUPABASE_URL.replace('https://','').split('.')[0];
       open(`https://supabase.com/dashboard/project/${ref}/auth/users`,'_blank','noopener');
     }
-    $('#logout').onclick=async()=>{if(db)await db.auth.signOut();if(db&&trainingChannel){await db.removeChannel(trainingChannel);trainingChannel=null}APP_STATE.userId=null;APP_STATE.currentEmail='';APP_STATE.accountName='';APP_STATE.role='parent';resetPersonalState();APP_STATE.games=[];APP_STATE.standings=[];APP_STATE.gameRsvps=[];APP_STATE.gameAttendees=[];APP_STATE.trainingRsvps=[];APP_STATE.gamesLoaded=false;APP_STATE.trainingsLoaded=false;$('#app').className='app role-parent';render();$('#loginOverlay').classList.remove('hidden');nav('training')};
+    $('#logout').onclick=async()=>{stopGamesSync();closeModal(true);if(db)await db.auth.signOut();if(db&&trainingChannel){await db.removeChannel(trainingChannel);trainingChannel=null}APP_STATE.userId=null;APP_STATE.currentEmail='';APP_STATE.accountName='';APP_STATE.role='parent';resetPersonalState();APP_STATE.games=[];APP_STATE.standings=[];APP_STATE.gameRsvps=[];APP_STATE.gameAttendees=[];APP_STATE.trainingRsvps=[];APP_STATE.gamesLoaded=false;APP_STATE.trainingsLoaded=false;$('#app').className='app role-parent';render();$('#loginOverlay').classList.remove('hidden');nav('training')};
     async function loadPlayerProfile(){
       if(!db||!APP_STATE.userId)return;
       resetPersonalState(APP_STATE.accountName);
@@ -1298,6 +1349,7 @@
       renderCalendar();
       await refreshApprovalBadge();
       subscribeTrainings();
+      subscribeGames();
     }
     async function restoreSession(){
       if(!db)return;
@@ -1306,7 +1358,9 @@
       await loadAuthenticatedUser();
     }
     setInterval(()=>{const today=berlinDateKey();if(today!==APP_STATE.currentDay){APP_STATE.currentDay=today;loadTrainings(true)}else if(db&&APP_STATE.userId)loadTrainings(true)},30000);
-    setInterval(()=>{if(db&&APP_STATE.userId&&['games','statistics'].includes(APP_STATE.currentScreen)){loadGames(true).then(()=>{if(APP_STATE.currentScreen==='statistics')loadStatistics(true)})}},300000);
+    window.addEventListener('online',queueGamesSync);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')queueGamesSync()});
+    setInterval(()=>{if(db&&APP_STATE.userId&&['games','statistics'].includes(APP_STATE.currentScreen)){loadGames(true,{quiet:true}).then(()=>{if(APP_STATE.currentScreen==='statistics')loadStatistics(true)})}},300000);
     setInterval(refreshGameCountdowns,1000);
     setInterval(()=>loadWeather(true),15*60*1000);
     updateQuickAction();render();loadWeather();if(!db)loadGames(true).then(renderCalendar);restoreSession();
