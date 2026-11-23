@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v79-game-realtime';
+const CACHE_NAME = 'hoopslot-pwa-v80-team-logos';
 const APP_SHELL = [
   './',
   './index.html',
@@ -26,6 +26,9 @@ const APP_SHELL = [
   './assets/team-tsv-norf.jpg',
   './assets/team-tsv-bayer-dormagen.png',
   './assets/team-tsv-urdenbach.png',
+  './assets/team-bg-shots-kaarst-buettgen.webp',
+  './assets/team-sg-rot-weiss-gierath.webp',
+  './assets/team-fsv-juechen.webp',
   './apple-touch-icon.png',
   './apple-touch-icon-precomposed.png'
 ];
