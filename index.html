@@ -267,6 +267,11 @@
     .datebar .day.training-pending:not(.game-day),.datebar .day.training-pending:not(.game-day) span,.datebar .day.training-pending:not(.game-day) b,.datebar .month-day.training-pending:not(.game-day){color:#1741aa}
     .meeting-picker{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:10px;margin:6px 0}
     .meeting-picker input{display:block;width:100%;min-width:0;min-height:46px;font-size:16px}
+    .clickable-game-card .match-teams{grid-template-columns:minmax(0,1fr) clamp(76px,28%,118px) minmax(0,1fr);column-gap:5px}
+    .clickable-game-card .match-vs{width:100%;min-width:0;justify-self:center;grid-template-columns:minmax(0,1fr);text-align:center}
+    .clickable-game-card .match-meeting{display:grid;justify-items:center;min-width:0;max-width:100%;gap:2px;white-space:normal;overflow-wrap:anywhere}
+    .clickable-game-card .match-meeting > span{font:inherit;color:inherit}
+    .clickable-game-card .match-meeting-time{white-space:nowrap;font-variant-numeric:tabular-nums}
   </style>
 </head>
 <body>
@@ -696,6 +701,13 @@
       const meeting=gameMeeting(game);if(!meeting)return '';
       return alwaysShowDate||meeting.date!==gameDayKey(game.starts_at)?shortDate(meeting.date)+' · '+meeting.time:meeting.time;
     }
+    function matchMeetingMarkup(game){
+      const meeting=gameMeeting(game),label=APP_STATE.language==='en'?'Meet':'Treffzeit';
+      if(!meeting)return `<small class="match-meeting">${label} –</small>`;
+      if(meeting.date===gameDayKey(game.starts_at))return `<small class="match-meeting">${label} ${escapeHtml(meeting.time)}</small>`;
+      const date=new Intl.DateTimeFormat(locale(),{timeZone:'UTC',weekday:'short',day:'numeric',month:'short'}).format(calendarDate(meeting.date));
+      return `<small class="match-meeting"><span>${label}</span><span class="match-meeting-date">${escapeHtml(date)}</span><span class="match-meeting-time">${escapeHtml(meeting.time)}</span></small>`;
+    }
     function gameCountdownTarget(game){const meeting=gameMeeting(game);return meeting?berlinMeetingInstant(meeting.date,meeting.time):gameStartInstant(game.starts_at)}
     function gameCountdownParts(target){const difference=Math.max(0,Number(target)-Date.now()),days=Math.floor(difference/86400000),afterDays=difference-days*86400000,hours=Math.floor(afterDays/3600000),afterHours=afterDays-hours*3600000,minutes=Math.floor(afterHours/60000),seconds=Math.floor((afterHours-minutes*60000)/1000),pad=value=>String(value).padStart(2,'0');return[pad(days),pad(hours),pad(minutes),pad(seconds)]}
     function gameCountdownText(target){const [days,hours,minutes,seconds]=gameCountdownParts(target);return`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`}
@@ -791,8 +803,8 @@
           if(!registrationOpen)return `<article class="upcoming-compact-card" role="button" tabindex="0" onclick="openGameDetails('${game.id}')" onkeydown="${keyHandler}"><div class="upcoming-compact-head"><div class="match-kicker">${escapeHtml(gameListDate(game.starts_at))}</div>${status}</div><div class="compact-matchup"><div class="compact-team home ${game.home_team===OUR_GAME_TEAM?'ours':''}"><b>${escapeHtml(game.home_team)}</b>${teamLogoMarkup(game.home_team,'compact-team-logo')}</div><div class="compact-center"><strong>${escapeHtml(gameClock(game.starts_at))}</strong><small>VS</small></div><div class="compact-team away ${game.away_team===OUR_GAME_TEAM?'ours':''}">${teamLogoMarkup(game.away_team,'compact-team-logo')}<b>${escapeHtml(game.away_team)}</b></div></div>${coach?`<div class="compact-game-foot">${action}</div>`:''}</article>`;
           const people=confirmedPeople.filter(row=>row.player_id),faces=people.length?`<div class="match-faces">${people.slice(0,3).map(attendeeFace).join('')}${people.length>3?`<span class="face">+${people.length-3}</span>`:''}</div>`:'';
           const homeLabel=APP_STATE.language==='en'?'Home':'Heim',awayLabel=APP_STATE.language==='en'?'Away':'Gast';
-          const meeting=gameMeetingLabel(game),countdownTarget=gameCountdownTarget(game);
-          return `<article class="match-card clickable-game-card" role="button" tabindex="0" onclick="openGameDetails('${game.id}')" onkeydown="${keyHandler}"><div class="match-top"><div class="match-kicker">${escapeHtml(gameListDate(game.starts_at))}</div>${status}</div><em class="match-countdown-top" data-game-countdown="${countdownTarget}" aria-label="${escapeHtml(gameCountdownText(countdownTarget))}">${gameCountdownMarkup(countdownTarget)}</em><div class="match-teams"><div class="match-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="match-vs"><strong>${escapeHtml(gameClock(game.starts_at))}</strong><span class="match-vs-label">VS</span><small class="match-meeting">${APP_STATE.language==='en'?'Meet':'Treffzeit'} ${escapeHtml(meeting||'–')}</small></div><div class="match-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div><div class="match-foot"><div class="attendance-inline">${faces}<span class="rsvp-summary">${escapeHtml(attendanceCountLabel(confirmedCount))}</span></div><div class="match-actions">${action}</div></div></article>`;
+          const countdownTarget=gameCountdownTarget(game);
+          return `<article class="match-card clickable-game-card" role="button" tabindex="0" onclick="openGameDetails('${game.id}')" onkeydown="${keyHandler}"><div class="match-top"><div class="match-kicker">${escapeHtml(gameListDate(game.starts_at))}</div>${status}</div><em class="match-countdown-top" data-game-countdown="${countdownTarget}" aria-label="${escapeHtml(gameCountdownText(countdownTarget))}">${gameCountdownMarkup(countdownTarget)}</em><div class="match-teams"><div class="match-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="match-vs"><strong>${escapeHtml(gameClock(game.starts_at))}</strong><span class="match-vs-label">VS</span>${matchMeetingMarkup(game)}</div><div class="match-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div><div class="match-foot"><div class="attendance-inline">${faces}<span class="rsvp-summary">${escapeHtml(attendanceCountLabel(confirmedCount))}</span></div><div class="match-actions">${action}</div></div></article>`;
         }).join('');
       }
       const latest=APP_STATE.games.map(x=>x.synced_at).filter(Boolean).sort().at(-1);
