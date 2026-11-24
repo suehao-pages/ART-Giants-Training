@@ -175,7 +175,7 @@
       background:linear-gradient(118deg,rgba(93,160,255,.025) 0%,rgba(15,55,146,.035) 100%);
       pointer-events:none;
     }
-    .signup-hero>span,.signup-hero>h2,.signup-hero>p,.signup-hero>.signup-facts,.signup-hero>.choice{position:relative;z-index:1}
+    .signup-hero>.signup-hero-head,.signup-hero>h2,.signup-hero>p,.signup-hero>.signup-facts,.signup-hero>.choice{position:relative;z-index:1}
     .signup-fact{
       background:
         linear-gradient(112deg,rgba(232,243,255,.17),rgba(96,145,221,.105) 46%,rgba(18,62,155,.13)),
@@ -278,7 +278,8 @@
     .push-detail-bell{position:absolute;z-index:1;right:0;top:0;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:12px;background:#eef1f6;color:#3b4a63}
     .push-detail-bell svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     .push-detail-bell.is-set{background:#e3ebff;color:#1742da}
-    .signup-hero .push-detail-bell{right:22px;top:16px;background:#ffffff22;color:#fff}
+    .signup-hero-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .signup-hero-head .push-detail-bell{position:static;flex:0 0 40px;background:#ffffff22;color:#fff}
     .signup-hero .push-detail-bell.is-set{background:#fff;color:#1742da}
     .game-detail-head:has(.push-detail-bell) h2{padding-right:48px;min-height:36px}
     .push-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:8px 0;min-height:48px;border:0;background:transparent;color:inherit;font:inherit;font-weight:680}
@@ -289,6 +290,21 @@
     .push-category-group .push-toggle{font-weight:550}
     .push-settings-note{font-size:13px;margin:12px 0 0}
     .push-device-connect{margin:4px 0 10px}
+    .push-reminder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+    .modal .push-reminder-head h2{margin:0}
+    .push-reminder-toggle{display:grid;place-items:center;min-height:44px;padding:0;border:0;border-radius:10px;background:transparent}
+    .push-reminder-picker{margin-top:14px}
+    .push-reminder-picker-title{margin:0 0 7px;font-size:13px;font-weight:750;color:var(--ink)}
+    .push-wheel-labels,.push-wheels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));text-align:center}
+    .push-wheel-labels{color:var(--muted);font-size:12px;font-weight:700}
+    .push-wheels{--push-wheel-row:40px;position:relative;isolation:isolate;border-radius:14px;margin-top:2px}
+    .push-wheels:before{content:"";position:absolute;z-index:-1;inset:var(--push-wheel-row) 0 auto;height:var(--push-wheel-row);border-radius:12px;background:#edf1f6;pointer-events:none}
+    .push-wheel{height:calc(var(--push-wheel-row) * 3);overflow-y:auto;overscroll-behavior-y:contain;scroll-snap-type:y mandatory;scrollbar-width:none;touch-action:pan-y;user-select:none;border-radius:10px}
+    .push-wheel::-webkit-scrollbar{display:none}
+    .push-wheel:focus-visible,.push-reminder-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:-2px}
+    .push-wheel:before,.push-wheel:after{content:"";display:block;height:var(--push-wheel-row)}
+    .push-wheel-option{height:var(--push-wheel-row);display:grid;place-items:center;scroll-snap-align:center;color:var(--muted);font-size:17px;font-weight:550;font-variant-numeric:tabular-nums;cursor:pointer}
+    .push-wheel-option.is-selected{color:var(--ink);font-size:21px;font-weight:800}
   </style>
 </head>
 <body>
@@ -351,7 +367,7 @@
       </section>
 
       <section class="screen" id="screen-signup">
-        <div class="signup-hero"><span class="pill" style="background:rgba(255,255,255,.15);color:#fff" data-i18n="practiceDetails">Nächstes Training</span><h2 id="signupDate">Mi, 30. September</h2><p id="signupMeta">16:30–18:00 · CeC 3</p><div class="signup-facts"><div class="signup-fact"><span data-i18n="coach">Trainer</span><div class="signup-coach-person" id="signupCoach">–</div></div><div class="signup-fact"><span data-i18n="location">Ort</span><b id="signupLocation">–</b><div id="signupAddress"></div></div></div><div class="choice"><button class="yes" id="yesBtn">✓ Ich bin dabei</button><button class="secondary" id="signupRoute" data-i18n="route">Google Maps</button><button class="secondary coach-only hidden" id="signupEdit" data-i18n="edit">Bearbeiten</button></div></div>
+        <div class="signup-hero"><div class="signup-hero-head"><span class="pill" style="background:rgba(255,255,255,.15);color:#fff" data-i18n="practiceDetails">Nächstes Training</span></div><h2 id="signupDate">Mi, 30. September</h2><p id="signupMeta">16:30–18:00 · CeC 3</p><div class="signup-facts"><div class="signup-fact"><span data-i18n="coach">Trainer</span><div class="signup-coach-person" id="signupCoach">–</div></div><div class="signup-fact"><span data-i18n="location">Ort</span><b id="signupLocation">–</b><div id="signupAddress"></div></div></div><div class="choice"><button class="yes" id="yesBtn">✓ Ich bin dabei</button><button class="secondary" id="signupRoute" data-i18n="route">Google Maps</button><button class="secondary coach-only hidden" id="signupEdit" data-i18n="edit">Bearbeiten</button></div></div>
         <div class="section-head"><h2 data-i18n="attendances">Teilnahmen</h2><span class="attend" id="attendanceCount">8 Zusagen</span></div>
         <div class="signup-list" id="peopleList"></div>
       </section>
@@ -404,7 +420,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
-  <script src="./notifications.js?v=82"></script>
+  <script src="./notifications.js?v=83"></script>
   <script>
     /* Public browser credentials only. Never place the service_role key here. */
     const ANDROID_STANDALONE=/Android/i.test(navigator.userAgent)&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||document.referrer.startsWith('android-app://'));

@@ -172,12 +172,15 @@ async function disconnectPushDevice() {
     new Promise(resolve=>setTimeout(resolve,2700)),
   ]);
 }
+function pushSwitchIndicator(active) {
+  return '<span class="status-switch '+(active?'on':'off')+'" aria-hidden="true"><span>'+(active?'ON':'OFF')+'</span><i></i></span>';
+}
 function pushSwitch(label,active,action,groupId) {
   const labelId = 'push-label-'+action;
   return '<button type="button" class="push-toggle" data-push-toggle="'+action+'" role="switch" aria-checked="'+active+'"'
     +(groupId?' aria-labelledby="'+groupId+' '+labelId+'"':'')+'>'
     +'<span id="'+labelId+'">'+escapeHtml(label)+'</span>'
-    +'<span class="status-switch '+(active?'on':'off')+'" aria-hidden="true"><span>'+(active?'ON':'OFF')+'</span><i></i></span></button>';
+    +pushSwitchIndicator(active)+'</button>';
 }
 function pushCategoryGroup([kind,de,en]) {
   const headingId = 'push-group-'+kind;
@@ -240,10 +243,11 @@ function openPushSettings() {
   renderPushSettings();
 }
 function decoratePushTraining(session) {
-  const hero=$('#screen-signup .signup-hero');
-  hero.querySelector('.push-detail-bell')?.remove();
+  const head=$('#screen-signup .signup-hero-head');
+  if (!head) return;
+  head.querySelector('.push-detail-bell')?.remove();
   const start = gameStartInstant(session.date+'T'+session.time.split(/[–-]/)[0].trim());
-  if (Number.isFinite(start) && start>Date.now()) appendPushBell(hero,'training',session.id);
+  if (Number.isFinite(start) && start>Date.now()) appendPushBell(head,'training',session.id);
 }
 function decoratePushGame(game) {
   const head=$('#modal .game-detail-head');
@@ -261,7 +265,79 @@ function appendPushBell(parent,kind,id) {
   button.setAttribute('aria-label',label);button.title=label;
   button.innerHTML=PUSH_BELL;
   button.onclick=()=>openPushReminder(kind,id);
-  parent.prepend(button);
+  if (kind==='training') parent.append(button);else parent.prepend(button);
+}
+const PUSH_LEAD_CHOICES=Array.from({length:13},(_,i)=>i*15);
+const PUSH_LEAD_HOURS=[0,1,2,3];
+const pushLeadMinuteChoices=hours=>hours===0?[15,30,45]:hours===3?[0]:[0,15,30,45];
+function bindPushWheel(node,format,onChange=()=>{}) {
+  let values=[], index=0;
+  const rowHeight=()=>node.children[0]?.offsetHeight||0;
+  function select(next,snap) {
+    index=Math.max(0,Math.min(values.length-1,next));
+    const value=values[index];
+    if (snap) node.scrollTop=index*rowHeight();
+    Array.from(node.children).forEach((row,i)=>row.classList.toggle('is-selected',i===index));
+    node.setAttribute('aria-valuenow',value);
+    node.setAttribute('aria-valuetext',format(value));
+    return value;
+  }
+  function read() {
+    const height=rowHeight();
+    if (!height || !values.length) return values[index];
+    const value=select(Math.round(node.scrollTop/height),false);
+    onChange(value);
+    return value;
+  }
+  node.onscroll=read;
+  node.onclick=event=>{
+    const row=event.target.closest('[data-push-wheel-index]');
+    if(row) onChange(select(Number(row.dataset.pushWheelIndex),true));
+  };
+  node.onkeydown=event=>{
+    read();
+    const next={ArrowUp:index+1,ArrowDown:index-1,ArrowRight:index+1,ArrowLeft:index-1,Home:0,End:values.length-1}[event.key];
+    if (next===undefined) return;
+    event.preventDefault();
+    onChange(select(next,true));
+  };
+  return {read,replace(next,value){
+    values=next;
+    node.innerHTML=values.map((item,i)=>'<div class="push-wheel-option" data-push-wheel-index="'+i+'" aria-hidden="true">'+item+'</div>').join('');
+    node.setAttribute('aria-valuemin',values[0]);
+    node.setAttribute('aria-valuemax',values.at(-1));
+    return select(Math.max(0,values.indexOf(value)),true);
+  }};
+}
+function bindTrainingPushLead(selected,categoryOn) {
+  const picker=$('#pushReminderPicker'), toggle=$('#pushReminderToggle');
+  let enabled=selected>0 && categoryOn;
+  let hours=Math.floor((selected||15)/60),minutes=(selected||15)%60;
+  const minuteWheel=bindPushWheel($('#pushReminderMinutes'),value=>pushText(value+(value===1?' Minute':' Minuten'),value+(value===1?' minute':' minutes')),value=>{minutes=value;});
+  const hourWheel=bindPushWheel($('#pushReminderHours'),value=>pushText(value+(value===1?' Stunde':' Stunden'),value+(value===1?' hour':' hours')),value=>{
+    if (value===hours) return;
+    // Read the outgoing minute column before replacing its constrained values.
+    minuteWheel.read();
+    hours=value;
+    minutes=minuteWheel.replace(pushLeadMinuteChoices(hours),minutes);
+  });
+  function read() {
+    if (!enabled) return 0;
+    hourWheel.read();minuteWheel.read();
+    return hours*60+minutes;
+  }
+  function render() {
+    toggle.innerHTML=pushSwitchIndicator(enabled);
+    toggle.setAttribute('aria-checked',enabled);
+    picker.hidden=!enabled;
+    if (enabled) {
+      hourWheel.replace(PUSH_LEAD_HOURS,hours);
+      minutes=minuteWheel.replace(pushLeadMinuteChoices(hours),minutes);
+    }
+  }
+  toggle.onclick=()=>{read();enabled=!enabled;render();};
+  render();
+  return read;
 }
 function openPushReminder(kind,id) {
   const isGame=kind==='game', key=pushReminderKey(kind,id), cat=kind+'_reminder';
@@ -274,27 +350,35 @@ function openPushReminder(kind,id) {
   const known=Number.isFinite(target) && (!isGame || gameMeeting(event) || gameClock(event.starts_at)!=='00:00');
   const waiting=isGame?event.registration_open!==true:event.status!=='confirmed';
   const back=()=>isGame?openGameDetails(id):closeModal();
-  const choices=[0,...Array.from({length:12},(_,i)=>(i+1)*15)];
   const label=minutes=>minutes===0?pushText('Aus','Off'):
     minutes<60?pushText(minutes+' Min. vorher',minutes+' min before'):
       pushText(Math.floor(minutes/60)+' Std.'+(minutes%60?' '+minutes%60+' Min.':'')+' vorher',
         Math.floor(minutes/60)+' hr'+(minutes%60?' '+minutes%60+' min':'')+' before');
   const reference=isGame ? (gameMeeting(event)?pushText('vor der Treffzeit','before the meeting time'):pushText('vor der Treffzeit oder dem Spielbeginn','before the meeting time or tip-off'))
     :pushText('vor Trainingsbeginn','before practice starts');
-  showModal('<h2>'+pushText('Erinnerung','Reminder')+'</h2><p>'+pushText('Du erhältst eine Nachricht ','You will get a notification ')+reference+'.</p>'
+  const title='<h2>'+pushText('Erinnerung','Reminder')+'</h2>';
+  const reminderHeader=isGame?title+'<p>'+pushText('Du erhältst eine Nachricht ','You will get a notification ')+reference+'.</p>'
+    :'<div class="push-reminder-head">'+title+'<button class="push-reminder-toggle" id="pushReminderToggle" type="button" role="switch" aria-label="'+pushText('Trainingserinnerung','Practice reminder')+'" aria-controls="pushReminderPicker"></button></div>';
+  const leadPicker=isGame?'<div class="field"><label for="pushLead">'+pushText('Wie lange vorher?','How far in advance?')+'</label><select id="pushLead">'
+    +PUSH_LEAD_CHOICES.map(minutes=>'<option value="'+minutes+'"'+(selected===minutes?' selected':'')+'>'+escapeHtml(label(minutes))+'</option>').join('')+'</select></div>'
+    :'<section class="push-reminder-picker" id="pushReminderPicker" aria-labelledby="pushReminderBefore" hidden>'
+      +'<h3 class="push-reminder-picker-title" id="pushReminderBefore">'+pushText('Vor','Before')+'</h3>'
+      +'<div class="push-wheel-labels" aria-hidden="true"><span>'+pushText('Std.','hr')+'</span><span>'+pushText('Min.','min')+'</span></div>'
+      +'<div class="push-wheels"><div class="push-wheel" id="pushReminderHours" tabindex="0" role="spinbutton" aria-label="'+pushText('Stunden','Hours')+'"></div>'
+      +'<div class="push-wheel" id="pushReminderMinutes" tabindex="0" role="spinbutton" aria-label="'+pushText('Minuten','Minutes')+'"></div></div></section>';
+  showModal(reminderHeader
     +(!known?'<p>'+pushEndMessage()+'</p>':waiting?'<p>'+pushText('Die Erinnerung wird erst verschickt, wenn der Termin bestätigt ist.','The reminder will only be sent once the event is confirmed.')+'</p>':'')
-    +(!categoryOn?'<p class="push-settings-note">'+pushText('Wenn du eine Vorlaufzeit speicherst, schaltest du diese Erinnerungskategorie ein.','Saving a lead time also turns on this reminder category.')+'</p>':'')
-    +'<div class="field"><label for="pushLead">'+pushText('Wie lange vorher?','How far in advance?')+'</label><select id="pushLead">'
-    +choices.map(minutes=>'<option value="'+minutes+'"'+(selected===minutes?' selected':'')+'>'+escapeHtml(label(minutes))+'</option>').join('')
-    +'</select></div><div class="modal-actions"><button class="ghost" id="pushReminderBack" type="button">'+pushText('Zurück','Back')+'</button>'
+    +(isGame&&!categoryOn?'<p class="push-settings-note">'+pushText('Wenn du eine Vorlaufzeit speicherst, schaltest du diese Erinnerungskategorie ein.','Saving a lead time also turns on this reminder category.')+'</p>':'')
+    +leadPicker+'<div class="modal-actions"><button class="ghost" id="pushReminderBack" type="button">'+pushText('Zurück','Back')+'</button>'
     +'<button class="primary" id="pushReminderSave" type="button">'+t('save')+'</button></div>');
+  const readMinutes=isGame?()=>Number($('#pushLead').value):bindTrainingPushLead(selected,categoryOn);
   $('#pushReminderBack').onclick=back;
   $('#pushReminderSave').onclick=async eventClick=>{
-    const button=eventClick.currentTarget, minutes=Number($('#pushLead').value), user=APP_STATE.userId, state=pushState;
+    const button=eventClick.currentTarget, minutes=readMinutes(), user=APP_STATE.userId, state=pushState;
     if (!db || !user || !PUSH_UUID.test(String(id))) {
       toast(pushText('Für diesen Termin ist noch keine Push-Erinnerung verfügbar.','Push reminders are not available for this event yet.'));return;
     }
-    if (!choices.includes(minutes)) return;
+    if (!PUSH_LEAD_CHOICES.includes(minutes)) return;
     if (minutes && known && target-Date.now()<=minutes*60000) {
       toast(pushText('Dieser Zeitpunkt ist schon vorbei. Wähle eine kürzere Vorlaufzeit.','That reminder time has passed. Choose a shorter lead time.'));return;
     }
