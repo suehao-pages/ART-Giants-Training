@@ -307,7 +307,7 @@
     /* Keep space above the masthead for a future announcement strip. */
     .home-masthead{--home-masthead-height:36px;position:relative;z-index:2;display:grid;grid-template-columns:clamp(100px,28%,122px) minmax(0,1fr);align-items:stretch;gap:clamp(8px,3vw,14px);margin-block-start:clamp(10px,3vw,15px)}
     .home-greeting,.home-organization{min-block-size:var(--home-masthead-height);min-width:0;display:flex;flex-direction:column;align-items:flex-start}
-    .home-greeting{align-items:flex-end;justify-content:center;gap:2px;text-align:right}
+    .home-greeting{align-items:flex-end;justify-content:center;gap:2px;text-align:right;text-shadow:0 1px 3px #080d17,0 0 7px #080d17}
     .home-greeting-label{color:#eef5ff;font-size:clamp(10px,2.8vw,12px);font-weight:650;line-height:1.18}
     .home-greeting-name{max-inline-size:100%;color:#fff;font-size:clamp(14px,4vw,18px);font-weight:800;line-height:1.1;letter-spacing:-.025em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .home-organization{--club-crest-width:calc(var(--home-masthead-height) * .742);position:relative;justify-content:center;gap:1px;margin-inline-start:calc(var(--club-crest-width) * .46);padding:3px 6px 3px calc(var(--club-crest-width) * .64);border:1px solid rgba(192,219,255,.50);border-radius:8px;background:rgba(156,196,254,.09);line-height:1.05}
@@ -316,17 +316,19 @@
     .home-org-meta{display:flex;align-items:center;gap:4px;color:#dceaff;font-size:8px;font-weight:700;white-space:nowrap}
     .home-org-chevron{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
     .home-org-crest{position:absolute;inset-block-start:50%;inset-inline-start:calc(var(--club-crest-width) * -.46);block-size:var(--home-masthead-height);inline-size:auto;transform:translateY(-50%);filter:drop-shadow(0 3px 7px rgba(0,0,0,.24));pointer-events:none}
-    .home-weather{--home-weather-icon-size:clamp(96px,34vw,165px);--home-weather-overhang:clamp(34px,11vw,54px);position:relative;z-index:1;display:grid;align-items:center;min-height:74px;margin-top:clamp(11px,3.6vw,16px);padding-inline-end:calc(var(--home-weather-icon-size) - var(--home-weather-overhang) + 6px);background:none;border:0;box-shadow:none}
-    .home-weather-data{min-width:0;display:grid;grid-template-columns:max-content minmax(0,1fr);grid-template-areas:"city city" "temperature summary";align-items:center;gap:4px clamp(7px,2.5vw,11px)}
-    .home-weather-summary{grid-area:summary;min-width:0;display:grid;gap:4px}
-    .home-weather-place{grid-area:city;display:flex;align-items:center;gap:4px;min-width:0;color:#e3efff;font-size:clamp(11px,3.4vw,15px);font-weight:750;line-height:1.2;overflow-wrap:anywhere}
-    .home-weather-place span{min-width:0}
-    .home-weather-pin{width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-    .home-weather-temp{grid-area:temperature;font-size:clamp(34px,10vw,47px);font-weight:750;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .home-weather-condition{color:#e9f2ff;font-size:clamp(12px,3.7vw,16px);font-weight:700;line-height:1.2;overflow-wrap:anywhere}
-    .home-weather-range{color:#becfe6;font-size:clamp(10px,3.1vw,14px);font-weight:600;line-height:1.25;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .home-weather-icon{position:absolute;inset-block-start:0;inset-inline-end:calc(-1 * var(--home-weather-overhang));width:var(--home-weather-icon-size);aspect-ratio:1;display:grid;place-items:center;pointer-events:none}
+    .home-weather{--home-weather-temp-size:clamp(34px,10vw,47px);position:relative;z-index:1;display:grid;align-items:center;min-height:74px;margin-top:clamp(11px,3.6vw,16px);background:none;border:0;box-shadow:none}
+    .home-weather-data{min-width:0;display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:stretch;column-gap:clamp(15px,4vw,18px);transform:translateY(clamp(15px,4.2vw,20px))}
+    .home-weather-temp{font-size:var(--home-weather-temp-size);font-weight:750;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .home-weather-summary{min-width:0;min-block-size:var(--home-weather-temp-size);display:grid;align-content:space-between;justify-items:start;line-height:1}
+    .home-weather-condition,.home-weather-city{display:block;max-inline-size:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .home-weather-condition{color:#e9f2ff;font-size:clamp(11px,2.9vw,13px);font-weight:700}
+    .home-weather-range{color:#becfe6;font-size:clamp(10px,2.55vw,12px);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .home-weather-place{position:relative;max-inline-size:100%;color:#e3efff;font-size:clamp(10px,2.55vw,12px);font-weight:650}
+    .home-weather-pin{position:absolute;inset-inline-end:calc(100% + 3px);inset-block-start:50%;transform:translateY(-50%);width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    /* Anchor the icon's center on the top-right corner. The header clips the other three quarters. */
+    .home-weather-icon{--home-weather-icon-size:clamp(184px,57vw,276px);position:absolute;z-index:1;inset-block-start:calc(var(--home-weather-icon-size) / -2);inset-inline-end:calc(var(--home-weather-icon-size) / -2);width:var(--home-weather-icon-size);aspect-ratio:1;display:grid;place-items:center;pointer-events:none}
     .home-weather-icon .weather-symbol{width:100%;height:100%}
+    .home-weather-icon:has(.sun){transform:translate(11px,-13px) rotate(-20deg)}
   </style>
 </head>
 <body>
@@ -346,15 +348,15 @@
       </div>
       <div class="home-weather" id="weatherHero" aria-live="polite">
         <div class="home-weather-data">
-          <div class="home-weather-place"><svg class="home-weather-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.1"/></svg><span id="weatherCity">Düsseldorf</span></div>
           <strong class="home-weather-temp" id="weatherTemp">--°</strong>
           <div class="home-weather-summary">
             <span class="home-weather-condition" id="weatherCondition">Wetter wird geladen…</span>
             <span class="home-weather-range" id="weatherRange">H: –° · T: –°</span>
+            <span class="home-weather-place"><svg class="home-weather-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.1"/></svg><span class="home-weather-city" id="weatherCity">Düsseldorf</span></span>
           </div>
         </div>
-        <div class="home-weather-icon" id="weatherIcon" aria-hidden="true"></div>
       </div>
+      <div class="home-weather-icon" id="weatherIcon" aria-hidden="true"></div>
     </header>
 
     <section class="status-card hidden" id="nextCard">
