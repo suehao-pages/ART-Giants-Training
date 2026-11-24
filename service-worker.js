@@ -1,7 +1,9 @@
-const CACHE_NAME = 'hoopslot-pwa-v80-team-logos';
+const CACHE_NAME = 'hoopslot-pwa-v81-notifications';
+const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
   './index.html',
+  './notifications.js',
   './manifest.webmanifest',
   './assets/hoopslot-app-icon-32.png',
   './assets/art-giants-logo.png',
@@ -41,10 +43,52 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
+      keys.filter(key => key.startsWith('hoopslot-pwa-') && key !== CACHE_NAME).map(key => caches.delete(key))
     ))
   );
   self.clients.claim();
+});
+
+function eventLink(kind,id) {
+  if (!['training','game'].includes(kind) || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id||'')) return null;
+  const url=new URL('./',self.registration.scope);
+  url.searchParams.set('pushEvent',kind);
+  url.searchParams.set('pushId',id);
+  return url;
+}
+
+self.addEventListener('push',event=>{
+  event.waitUntil((async()=>{
+    if(!event.data)return;
+    let data;
+    try{data=event.data.json()}catch{return}
+    if(!data || !eventLink(data.eventKind,data.eventId) || typeof data.title!=='string' || typeof data.body!=='string')return;
+    const cache=await caches.open(PUSH_DEVICE_CACHE);
+    const binding=await cache.match(new URL('./.push-device',self.registration.scope).href);
+    if(!binding || await binding.text()!==data.device)return;
+    await self.registration.showNotification(data.title,{
+      body:data.body,tag:data.tag,
+      icon:new URL('./assets/hoopslot-app-icon-192.png',self.registration.scope).href,
+      data:{eventKind:data.eventKind,eventId:data.eventId},
+    });
+  })());
+});
+
+self.addEventListener('notificationclick',event=>{
+  event.notification.close();
+  event.waitUntil((async()=>{
+    const {eventKind,eventId}=event.notification.data||{};
+    const url=eventLink(eventKind,eventId);
+    if(!url)return;
+    const clients=await self.clients.matchAll({type:'window',includeUncontrolled:false});
+    const client=clients.find(item=>item.url.startsWith(self.registration.scope));
+    if(client){
+      await client.focus();
+      client.postMessage({type:'HOOPSLOT_NOTIFICATION',eventKind,eventId});
+    }else{
+      await self.clients.openWindow(url.href);
+    }
+  })());
 });
 
 self.addEventListener('fetch', event => {

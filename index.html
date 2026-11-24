@@ -272,6 +272,21 @@
     .clickable-game-card .match-meeting{display:grid;justify-items:center;min-width:0;max-width:100%;gap:2px;white-space:normal;overflow-wrap:anywhere}
     .clickable-game-card .match-meeting > span{font:inherit;color:inherit}
     .clickable-game-card .match-meeting-time{white-space:nowrap;font-variant-numeric:tabular-nums}
+    .push-nav-dot,.push-profile-dot{width:12px;min-width:12px;height:12px;padding:0;border:2px solid #fff;border-radius:50%;background:#e5252a;box-shadow:0 3px 8px rgba(229,37,42,.32)}
+    .push-nav-dot{position:absolute;z-index:3;top:5px;right:12px}.nav-notification-badge:not(.hidden)+.push-nav-dot{top:1px;right:2px}
+    .signup-hero,.game-detail-head{position:relative}
+    .push-detail-bell{position:absolute;z-index:1;right:0;top:0;display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:12px;background:#eef1f6;color:#3b4a63}
+    .push-detail-bell svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .push-detail-bell.is-set{background:#e3ebff;color:#1742da}
+    .signup-hero .push-detail-bell{right:22px;top:16px;background:#ffffff22;color:#fff}
+    .signup-hero .push-detail-bell.is-set{background:#fff;color:#1742da}
+    .game-detail-head:has(.push-detail-bell) h2{padding-right:48px;min-height:36px}
+    .push-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:8px 0;min-height:48px;border:0;background:transparent;color:inherit;font:inherit;font-weight:680}
+    .push-all-hint{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px;color:#596983}
+    .push-all-hint button{padding:4px 0;border:0;background:transparent;color:#1644e2;font:inherit;text-decoration:underline}
+    .push-divider{border:0;border-top:1px solid var(--line);margin:12px 0 5px}
+    .push-settings-note{font-size:13px;margin:12px 0 0}
+    .push-device-connect{margin:4px 0 10px}
   </style>
 </head>
 <body>
@@ -352,6 +367,7 @@
       <section class="screen" id="screen-profile">
         <div class="profile-card"><div class="avatar-wrap"><div class="bigavatar" id="profileAvatar">AG</div><button class="avatar-edit" id="avatarEdit" aria-label="Profilfoto ändern"><svg viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L19 9l-4-4zM13 7l4 4"/></svg></button><input class="hidden" id="avatarFile" type="file" accept="image/*"></div><h2 id="profileName">Profil</h2><div class="role" id="profileRole">–</div><div class="stats"><div class="stat"><b id="heightValue">–</b><span data-i18n="heightCm">Größe cm</span></div><div class="stat"><b id="weightValue">–</b><span data-i18n="weightKg">Gewicht kg</span></div><div class="stat"><b id="handValue">–</b><span data-i18n="dominantHand">Wurfhand</span></div></div></div>
         <div class="settings">
+          <button class="setting full" id="pushSettings" type="button"><span class="setting-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg></span><span class="setting-main"><span class="setting-title" id="pushSettingsTitle">Benachrichtigungen</span><span class="setting-sub" id="pushSettingsSub">Anmeldungen, Änderungen und Erinnerungen</span></span><span class="setting-badge push-profile-dot hidden" id="pushProfileDot" aria-hidden="true"></span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
           <button class="setting full" id="editProfile"><span class="setting-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg></span><span class="setting-main"><span class="setting-title" data-i18n="profile">Spielerprofil</span><span class="setting-sub" data-i18n="profileSub">Foto und persönliche Daten</span></span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
           <button class="setting full" id="changePassword"><span class="setting-icon"><svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9m-3 0v3m-3-3v3"/></svg></span><span class="setting-main"><span class="setting-title" data-i18n="passwordChange">Passwort ändern</span><span class="setting-sub" data-i18n="passwordSub">Aktuelles Passwort sicher aktualisieren</span></span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
           <button class="setting full" id="languageSetting"><span class="setting-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></span><span class="setting-main"><span class="setting-title" data-i18n="language">Sprache</span><span class="setting-sub" data-i18n="languageSub">App-Sprache auswählen</span></span><span class="language-value" id="languageValue">Deutsch</span><svg class="chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg></button>
@@ -371,7 +387,7 @@
       <button class="navitem" data-screen="games"><svg viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4H4v3c0 2 2 4 4 4m9-7h3v3c0 2-2 4-4 4M8 3h8v6a4 4 0 0 1-8 0z"/></svg><span data-i18n="games">Spiele</span></button>
       <button class="navitem navplus" id="quickAction" aria-label="Schnellaktion"><img class="quick-ball" src="./assets/basketball-parent-v9.png" alt=""></button>
       <button class="navitem" data-screen="statistics"><svg viewBox="0 0 24 24"><path d="M4 20V10m6 10V4m6 16v-7m4 7H2"/></svg><span data-i18n="statistics">Statistik</span></button>
-      <button class="navitem" data-screen="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i18n="profile">Profil</span><span class="nav-notification-badge hidden" id="profileNavBadge">0</span></button>
+      <button class="navitem" data-screen="profile"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i18n="profile">Profil</span><span class="nav-notification-badge hidden" id="profileNavBadge">0</span><span class="push-nav-dot hidden" id="pushNavDot" aria-hidden="true"></span></button>
     </nav>
 
   <div class="overlay login" id="loginOverlay">
@@ -386,6 +402,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
+  <script src="./notifications.js"></script>
   <script>
     /* Public browser credentials only. Never place the service_role key here. */
     const ANDROID_STANDALONE=/Android/i.test(navigator.userAgent)&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||document.referrer.startsWith('android-app://'));
@@ -666,7 +683,7 @@
     }
     function renderTrainingPanel(){
       const s=APP_STATE.sessions.find(row=>String(row.id)===String(APP_STATE.selectedSessionId))||nextSession(),v=venueFor(s.venue),coach=['trainer','admin'].includes(APP_STATE.role),confirmed=s.status==='confirmed',joined=hasTrainingRsvp(s.id),attendees=trainingAttendees(s.id),ended=endDateTime(s)<=new Date();
-      APP_STATE.selectedSessionId=s.id;$('#signupDate').textContent=shortDate(s.date);$('#signupMeta').textContent=`${s.time} · ${Math.round((endDateTime(s)-startDateTime(s))/60000)} ${t('minutes')}`;$('#signupCoach').innerHTML=trainerAvatarMarkup(s);$('#signupLocation').textContent=`${s.venue} · ${v.name}`;$('#signupAddress').innerHTML=`<div class="address-line"><span>${escapeHtml(v.address)}</span>${copyAddressMarkup(v.address)}</div>`;
+      decoratePushTraining(s);APP_STATE.selectedSessionId=s.id;$('#signupDate').textContent=shortDate(s.date);$('#signupMeta').textContent=`${s.time} · ${Math.round((endDateTime(s)-startDateTime(s))/60000)} ${t('minutes')}`;$('#signupCoach').innerHTML=trainerAvatarMarkup(s);$('#signupLocation').textContent=`${s.venue} · ${v.name}`;$('#signupAddress').innerHTML=`<div class="address-line"><span>${escapeHtml(v.address)}</span>${copyAddressMarkup(v.address)}</div>`;
       const action=$('#yesBtn');action.disabled=!coach&&!confirmed;action.className=(coach?confirmed:joined)?'danger':'yes';action.textContent=coach?(confirmed?t('cancelPractice'):t('confirmPractice')):(confirmed?(joined?t('cancelAttendance'):(APP_STATE.language==='en'?'✓ Confirm':'✓ Zusagen')):t('confirmationOpen'));
       action.onclick=()=>ended?endedTrainingFeedback():coach?(confirmed?requestCancelTraining(s.id):confirmTrainingById(s.id)):(joined?requestCancelAttendance(s.id):join(s.id));$('#signupRoute').onclick=()=>openMap(encodeURIComponent(v.address));
       const edit=$('#signupEdit'),nearest=nearestConfirmedTraining(),canEdit=coach&&confirmed&&nearest&&String(nearest.id)===String(s.id);edit.classList.toggle('hidden',!canEdit);edit.onclick=()=>openSingleTrainingEditor(s.id);
@@ -865,6 +882,7 @@
       const meetingAction=coach?`<button class="detail-edit" type="button" onclick="openMeetingTimeEditor('${game.id}')" aria-label="${en?'Edit meeting time':'Treffzeit bearbeiten'}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-1 5 5-1L19 9l-4-4zM13 7l4 4"/></svg></button>`:'<span class="detail-edit-spacer" aria-hidden="true"></span>';
       const calendarAction=game.status==='upcoming'?`<button class="secondary" type="button" onclick="addGameToCalendar('${game.id}')" aria-label="${en?'Add to calendar':'Zum Kalender hinzufügen'}">${en?'Calendar':'Kalender'}</button>`:'';
       showModal(`<div class="game-detail-head"><h2>${en?'Game overview':'Spielübersicht'}</h2><div class="game-detail-matchup"><div class="game-detail-team ${game.home_team===OUR_GAME_TEAM?'ours':''}"><span>${homeLabel}</span>${teamLogoMarkup(game.home_team)}<b>${escapeHtml(game.home_team)}</b></div><div class="game-detail-vs">VS</div><div class="game-detail-team ${game.away_team===OUR_GAME_TEAM?'ours':''}"><span>${awayLabel}</span>${teamLogoMarkup(game.away_team)}<b>${escapeHtml(game.away_team)}</b></div></div></div><div class="detail-list"><div class="detail-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div class="detail-copy"><div class="detail-label">${en?'Game time':'Spielzeit'}</div><div class="detail-value">${escapeHtml(gameDate(game.starts_at))}</div></div></div><div class="detail-row meeting-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3 2M4.5 5.5 7 3M19.5 5.5 17 3"/></svg><div class="detail-copy"><div class="detail-label">${en?'Meeting time':'Treffzeit'}</div><div class="detail-value">${escapeHtml(meeting|| (en?'Not set yet':'Noch nicht festgelegt'))}</div></div>${meetingAction}</div><div class="detail-row"><svg viewBox="0 0 24 24"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0z"/><circle cx="12" cy="10" r="2.5"/></svg><div class="detail-copy"><div class="detail-label">${t('location')}</div><div class="detail-value">${escapeHtml(venueName)}</div><div class="venue-address address-line"><span>${escapeHtml(venueAddress)}</span>${copyAddressMarkup(venueAddress)}</div></div></div></div>${primaryActions?`<div class="${primaryActionsClass}">${primaryActions}</div>`:''}<div class="section-head"><h2>${t('attendances')}</h2></div>${attendees||`<div class="empty">${t('noResponse')}</div>`}<div class="modal-actions">${calendarAction}<button class="ghost" onclick="closeModal()">${t('close')}</button></div>`,false,gameId);
+      decoratePushGame(game);
     }
     function icsEscape(value){return String(value||'').replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,').replace(/;/g,'\\;')}
     function icsLocalStamp(value){const match=String(value||'').match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);return match?`${match[1]}${match[2]}${match[3]}T${match[4]}${match[5]}00`:''}
@@ -1174,7 +1192,7 @@
       if(profileError){await db.auth.signOut();toast('Für dieses Konto fehlt noch ein Profil');submit.disabled=false;submit.textContent='Anmelden';return}
       if(profile.approval_status!=='approved'){submit.disabled=false;submit.textContent='Anmelden';await showPendingApproval();return}
       resetPersonalState(profile.display_name||'');APP_STATE.userId=data.user.id;APP_STATE.currentEmail=data.user.email||'';APP_STATE.gamesLoaded=false;
-      setRole(profile.role,profile.display_name);await loadPlayerProfile();await loadTrainings(true);await refreshApprovalBadge();subscribeTrainings();subscribeGames();submit.disabled=false;submit.textContent='Anmelden';
+      setRole(profile.role,profile.display_name);void pushAccountReady();await loadPlayerProfile();await loadTrainings(true);await refreshApprovalBadge();subscribeTrainings();subscribeGames();openPushStartLink();submit.disabled=false;submit.textContent='Anmelden';
     };
     $('#quickSignup').onclick=()=>{const s=nextSession();if(s)(hasTrainingRsvp(s.id)?requestCancelAttendance(s.id):join(s.id))};
     $('#confirmTraining').onclick=()=>{const s=nextSession();if(s)(s.status==='confirmed'?requestCancelTraining(s.id):confirmTrainingById(s.id))};$('#editTraining').onclick=()=>openSingleTrainingEditor();$('#batchEdit').onclick=()=>openTrainingManagement();
@@ -1198,7 +1216,7 @@
     function toggleContactHint(){const hint=$('#contactHint');if(hint)hint.classList.toggle('hidden')}
     $('#editProfile').onclick=()=>{const en=APP_STATE.language==='en';showModal(`<h2>${t('playerProfile')}</h2><p>${en?'The date of birth is used only to calculate the current age.':'Aus dem Geburtsdatum wird automatisch nur das aktuelle Alter berechnet.'}</p><div class="field"><label>${t('name')}</label><input id="pName" value="${escapeHtml(APP_STATE.profile.name||'')}"></div><div class="formgrid"><div class="field"><label>${t('birthday')}</label>${dateInputMarkup('pBirthDate',APP_STATE.profile.birthDate||'')}</div><div class="field"><label>${t('dominantHand')}</label><select id="pHand"><option ${APP_STATE.profile.hand==='Rechts'?'selected':''}>Rechts</option><option ${APP_STATE.profile.hand==='Links'?'selected':''}>Links</option><option ${APP_STATE.profile.hand==='Beide'?'selected':''}>Beide</option></select></div><div class="field"><label>${t('heightCm')}</label><input id="pHeight" type="number" value="${APP_STATE.profile.height??''}"></div><div class="field"><label>${t('weightKg')}</label><input id="pWeight" type="number" step="0.1" value="${APP_STATE.profile.weight??''}"></div></div><div class="field"><div class="field-head"><label>${t('contact')}</label><button type="button" class="info-button" onclick="toggleContactHint()" aria-label="${en?'Contact privacy information':'Datenschutzhinweis zu Kontaktdaten'}">i</button></div><div id="contactHint" class="field-hint hidden">${en?'Contact information is visible only to coaches and administrators. Other parent accounts never receive this field.':'Kontaktdaten sind ausschließlich für Trainer und Administratoren sichtbar. Andere Elternkonten erhalten dieses Feld nicht.'}</div><input id="pContact" type="text" value="${escapeHtml(APP_STATE.profile.contact||'')}" placeholder="${en?'Phone or email':'Telefon oder E-Mail'}"></div><div class="modal-actions"><button class="ghost" onclick="closeModal()">${t('cancel')}</button><button class="primary" onclick="saveProfile()">${t('save')}</button></div>`)};
     async function saveProfile(){const birthDate=parseDateInput($('#pBirthDate').value),calculatedAge=ageFromBirthDate(birthDate);APP_STATE.profile={...APP_STATE.profile,name:$('#pName').value.trim(),birthDate,age:calculatedAge,height:+$('#pHeight').value||null,weight:+$('#pWeight').value||null,hand:$('#pHand').value,contact:$('#pContact').value.trim()};if(!APP_STATE.profile.name){toast(APP_STATE.language==='en'?'Please enter a name':'Bitte einen Namen eingeben');return}if(!birthDate||birthDate>berlinDateKey()||calculatedAge===null||calculatedAge>99){toast(APP_STATE.language==='en'?'Please enter a valid date of birth':'Bitte ein gültiges Geburtsdatum eingeben');return}if(db&&APP_STATE.userId){const {error:nameError}=await db.rpc('update_own_display_name',{new_display_name:APP_STATE.profile.name});if(nameError){toast(APP_STATE.language==='en'?'Profile name could not be saved':'Profilname konnte nicht gespeichert werden');return}const hand={Rechts:'right',Links:'left',Beide:'both'}[APP_STATE.profile.hand];const {data:existing}=await db.from('players').select('id').eq('owner_id',APP_STATE.userId).limit(1).maybeSingle();const payload={owner_id:APP_STATE.userId,first_name:APP_STATE.profile.name,birth_date:birthDate,height_cm:APP_STATE.profile.height,weight_kg:APP_STATE.profile.weight,dominant_hand:hand,contact:APP_STATE.profile.contact,avatar_url:avatarImage()||null,team:'U10-3'};const result=existing?.id?await db.from('players').update(payload).eq('id',existing.id):await db.from('players').insert(payload).select('id').single();if(result.error){toast(APP_STATE.language==='en'?'Player data could not be saved':'Spielerdaten konnten nicht gespeichert werden');return}APP_STATE.currentPlayerId=existing?.id||result.data?.id||APP_STATE.currentPlayerId}APP_STATE.accountName=APP_STATE.profile.name;render();closeModal();toast(t('profileSaved'))}
-    $('#languageSetting').onclick=()=>showModal(`<h2>${t('language')}</h2><p>${APP_STATE.language==='en'?'Select the language for the complete app.':'Wähle die Sprache für die gesamte App.'}</p><div class="rsvp-options"><button class="rsvp-option ${APP_STATE.language==='de'?'selected':''}" onclick="setLanguage('de')"><b>Deutsch</b><span>Standardsprache</span></button><button class="rsvp-option ${APP_STATE.language==='en'?'selected':''}" onclick="setLanguage('en')"><b>English</b><span>English interface</span></button></div>`);function setLanguage(language){APP_STATE.language=language;localStorage.setItem('ag-language',language);closeModal();setRole(APP_STATE.role,APP_STATE.accountName);nav(APP_STATE.currentScreen);toast(t('languageChanged'))}
+    $('#languageSetting').onclick=()=>showModal(`<h2>${t('language')}</h2><p>${APP_STATE.language==='en'?'Select the language for the complete app.':'Wähle die Sprache für die gesamte App.'}</p><div class="rsvp-options"><button class="rsvp-option ${APP_STATE.language==='de'?'selected':''}" onclick="setLanguage('de')"><b>Deutsch</b><span>Standardsprache</span></button><button class="rsvp-option ${APP_STATE.language==='en'?'selected':''}" onclick="setLanguage('en')"><b>English</b><span>English interface</span></button></div>`);function setLanguage(language){APP_STATE.language=language;localStorage.setItem('ag-language',language);pushRefreshUi();void pushSyncLanguage();closeModal();setRole(APP_STATE.role,APP_STATE.accountName);nav(APP_STATE.currentScreen);toast(t('languageChanged'))}
     $('#accounts').onclick=()=>openAccountManagement();
     const accountInitials=name=>String(name||'?').split(/\s+/).filter(Boolean).map(part=>part[0]).join('').slice(0,2).toUpperCase();
     const accountRoleLabel=role=>APP_STATE.language==='en'?({parent:'Parent',trainer:'Coach',admin:'Admin',player:'Player'}[role]||role):({parent:'Eltern',trainer:'Trainer',admin:'Admin',player:'Spieler'}[role]||role);
@@ -1328,7 +1346,7 @@
       const ref=SUPABASE_URL.replace('https://','').split('.')[0];
       open(`https://supabase.com/dashboard/project/${ref}/auth/users`,'_blank','noopener');
     }
-    $('#logout').onclick=async()=>{stopGamesSync();closeModal(true);if(db)await db.auth.signOut();if(db&&trainingChannel){await db.removeChannel(trainingChannel);trainingChannel=null}APP_STATE.userId=null;APP_STATE.currentEmail='';APP_STATE.accountName='';APP_STATE.role='parent';resetPersonalState();APP_STATE.games=[];APP_STATE.standings=[];APP_STATE.gameRsvps=[];APP_STATE.gameAttendees=[];APP_STATE.trainingRsvps=[];APP_STATE.gamesLoaded=false;APP_STATE.trainingsLoaded=false;$('#app').className='app role-parent';render();$('#loginOverlay').classList.remove('hidden');nav('training')};
+    $('#logout').onclick=async()=>{stopGamesSync();closeModal(true);await disconnectPushDevice();if(db)await db.auth.signOut();if(db&&trainingChannel){await db.removeChannel(trainingChannel);trainingChannel=null}APP_STATE.userId=null;pushRefreshUi();APP_STATE.currentEmail='';APP_STATE.accountName='';APP_STATE.role='parent';resetPersonalState();APP_STATE.games=[];APP_STATE.standings=[];APP_STATE.gameRsvps=[];APP_STATE.gameAttendees=[];APP_STATE.trainingRsvps=[];APP_STATE.gamesLoaded=false;APP_STATE.trainingsLoaded=false;$('#app').className='app role-parent';render();$('#loginOverlay').classList.remove('hidden');nav('training')};
     async function loadPlayerProfile(){
       if(!db||!APP_STATE.userId)return;
       resetPersonalState(APP_STATE.accountName);
@@ -1344,6 +1362,7 @@
       if(profile.approval_status!=='approved'){await showPendingApproval();return}
       resetPersonalState(profile.display_name||'');APP_STATE.userId=data.session.user.id;APP_STATE.currentEmail=data.session.user.email||'';APP_STATE.gamesLoaded=false;
       setRole(profile.role,profile.display_name);
+      void pushAccountReady();
       await loadPlayerProfile();
       await loadTrainings(true);
       await loadGames(true);
@@ -1351,6 +1370,7 @@
       await refreshApprovalBadge();
       subscribeTrainings();
       subscribeGames();
+      openPushStartLink();
     }
     async function restoreSession(){
       if(!db)return;
@@ -1364,7 +1384,7 @@
     setInterval(()=>{if(db&&APP_STATE.userId&&['games','statistics'].includes(APP_STATE.currentScreen)){loadGames(true,{quiet:true}).then(()=>{if(APP_STATE.currentScreen==='statistics')loadStatistics(true)})}},300000);
     setInterval(refreshGameCountdowns,1000);
     setInterval(()=>loadWeather(true),15*60*1000);
-    updateQuickAction();render();loadWeather();if(!db)loadGames(true).then(renderCalendar);restoreSession();
+    initPushUi();updateQuickAction();render();loadWeather();if(!db)loadGames(true).then(renderCalendar);restoreSession();
 
     // Keep the app shell installable while all Supabase requests stay online.
     if('serviceWorker' in navigator){
