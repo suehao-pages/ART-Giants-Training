@@ -1,9 +1,9 @@
-const CACHE_NAME = 'hoopslot-pwa-v83-training-reminders';
+const CACHE_NAME = 'hoopslot-pwa-v85-home-masthead';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
   './index.html',
-  './notifications.js?v=83',
+  './notifications.js?v=84',
   './manifest.webmanifest',
   './assets/hoopslot-app-icon-32.png',
   './assets/art-giants-logo.png',

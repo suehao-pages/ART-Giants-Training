@@ -288,7 +288,6 @@
     .push-divider{border:0;border-top:1px solid var(--line);margin:12px 0}
     .push-category-group h3{margin:0 0 3px;font-size:15px;line-height:1.4}
     .push-category-group .push-toggle{font-weight:550}
-    .push-settings-note{font-size:13px;margin:12px 0 0}
     .push-device-connect{margin:4px 0 10px}
     .push-reminder-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
     .modal .push-reminder-head h2{margin:0}
@@ -305,23 +304,53 @@
     .push-wheel:before,.push-wheel:after{content:"";display:block;height:var(--push-wheel-row)}
     .push-wheel-option{height:var(--push-wheel-row);display:grid;place-items:center;scroll-snap-align:center;color:var(--muted);font-size:17px;font-weight:550;font-variant-numeric:tabular-nums;cursor:pointer}
     .push-wheel-option.is-selected{color:var(--ink);font-size:21px;font-weight:800}
+    /* Home masthead: date and greeting, organization badge, then the unboxed weather. */
+    .home-masthead{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(128px,44%,168px);align-items:center;gap:clamp(8px,3vw,14px)}
+    .home-greeting{min-width:0;margin:0}
+    .home-date{display:block;margin-bottom:6px;color:#b9d0ef;font-size:clamp(10px,2.95vw,13px);font-weight:650;line-height:1.3}
+    .home-greeting-label{display:block;color:#eef5ff;font-size:clamp(14px,4vw,17px);font-weight:650;line-height:1.2}
+    .home-greeting-name{display:block;margin-top:2px;color:#fff;font-size:clamp(24px,7.4vw,32px);font-weight:850;line-height:1.13;letter-spacing:-.03em;overflow-wrap:anywhere}
+    .home-organization{--club-crest:clamp(42px,13vw,60px);position:relative;min-width:0;margin-inline-end:calc(var(--club-crest) * .46);padding:9px calc(var(--club-crest) * .62) 9px 10px;border:1px solid rgba(192,219,255,.50);border-radius:13px;background:rgba(156,196,254,.09);line-height:1.15}
+    .home-org-caption{display:block;color:#c4d8f3;font-size:clamp(9px,2.6vw,11px);font-weight:650}
+    .home-org-name{display:block;margin-top:3px;color:#fff;font-size:clamp(12px,3.5vw,15px);font-weight:810;white-space:nowrap}
+    .home-org-meta{display:flex;align-items:center;gap:6px;margin-top:4px;color:#dceaff;font-size:11px;font-weight:700;white-space:nowrap}
+    .home-org-chevron{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+    .home-org-crest{position:absolute;inset-block-start:50%;inset-inline-end:calc(var(--club-crest) * -.46);width:var(--club-crest);height:auto;transform:translateY(-50%);filter:drop-shadow(0 3px 7px rgba(0,0,0,.24));pointer-events:none}
+    .home-weather{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,max-content) auto;justify-content:start;align-items:center;gap:clamp(18px,8vw,38px);min-height:92px;margin-top:clamp(14px,4.7vw,21px);padding:0;background:none;border:0;box-shadow:none}
+    .home-weather-copy{min-width:0;text-align:left}
+    .home-weather-place{display:flex;align-items:center;gap:5px;color:#e3efff;font-size:13px;font-weight:750;line-height:1.25;overflow-wrap:anywhere}
+    .home-weather-pin{width:13px;height:13px;flex:0 0 13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .home-weather-temp{display:block;margin:3px 0 2px;font-size:clamp(38px,11vw,49px);font-weight:750;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums}
+    .home-weather-condition,.home-weather-range{display:block;color:#d8e6fa;font-size:12px;font-weight:600;line-height:1.35}
+    .home-weather-range{margin-top:3px;color:#becfe6;font-variant-numeric:tabular-nums}
+    .home-weather-icon{width:clamp(70px,22vw,96px);aspect-ratio:1;display:grid;place-items:center}
+    .home-weather-icon .weather-symbol{width:100%;height:100%}
   </style>
 </head>
 <body>
   <div class="app role-parent" id="app">
     <header class="top" id="appHeader">
-      <div class="home-hero-grid">
-        <div class="home-identity">
-          <div class="home-brand"><img class="home-hoopslot" src="./assets/hoopslot-logo-white.png" alt="HoopSlot"></div>
-          <div class="home-context">
-            <div class="eyebrow"><span data-i18n="greeting">Guten Tag</span>, <span id="greetingName">Leonie</span></div>
-            <div class="home-teamline"><img class="home-crest" src="./assets/art-giants-logo.png" alt="ART Giants Düsseldorf"><span class="home-teamcopy"><span class="home-team-label" data-i18n="welcomeTo">Willkommen bei</span><span class="home-team-meta"><span class="home-teamname">ART Giants</span><span class="home-teamseason">U10-3</span></span></span></div>
-          </div>
+      <div class="home-masthead">
+        <div class="home-greeting">
+          <time class="home-date" id="homeDate"></time>
+          <span class="home-greeting-label"><span data-i18n="greeting">Guten Tag</span>,</span>
+          <strong class="home-greeting-name" id="greetingName"></strong>
         </div>
-        <div class="weather-hero" id="weatherHero" aria-live="polite">
-          <div class="weather-icon-wrap" id="weatherIcon" aria-hidden="true"></div>
-          <div class="weather-copy"><div class="weather-main"><strong class="weather-temp" id="weatherTemp">--°</strong><span class="weather-condition" id="weatherCondition">Wetter wird geladen…</span></div><span class="weather-range" id="weatherRange">H: –° · T: –°</span><span class="weather-city" id="weatherCity">Düsseldorf</span></div>
+        <div class="home-organization">
+          <span class="home-org-caption" data-i18n="welcomeTo">Willkommen bei</span>
+          <strong class="home-org-name">ART Giants</strong>
+          <span class="home-org-meta">U10-3 <svg class="home-org-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></span>
+          <img class="home-org-crest" src="./assets/art-giants-logo.png" alt="">
         </div>
+      </div>
+      <div class="home-weather" id="weatherHero" aria-live="polite">
+        <div class="home-weather-copy">
+          <div class="home-weather-place"><svg class="home-weather-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.1"/></svg><span id="weatherCity">Düsseldorf</span></div>
+          <strong class="home-weather-temp" id="weatherTemp">--°</strong>
+          <span class="home-weather-condition" id="weatherCondition">Wetter wird geladen…</span>
+          <span class="home-weather-range" id="weatherRange">H: –° · T: –°</span>
+        </div>
+        <div class="home-weather-icon" id="weatherIcon" aria-hidden="true"></div>
       </div>
     </header>
 
@@ -420,7 +449,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./config.js"></script>
-  <script src="./notifications.js?v=83"></script>
+  <script src="./notifications.js?v=84"></script>
   <script>
     /* Public browser credentials only. Never place the service_role key here. */
     const ANDROID_STANDALONE=/Android/i.test(navigator.userAgent)&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||document.referrer.startsWith('android-app://'));
@@ -492,6 +521,11 @@
     const shortDate=d=>new Intl.DateTimeFormat(locale(),{weekday:"short",day:"numeric",month:"long"}).format(new Date(d+"T12:00:00"));
     const venueFor=code=>APP_STATE.venues.find(v=>v.code===code)||{code,name:code,address:'Düsseldorf'};
     const berlinDateKey=(date=new Date())=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Berlin',year:'numeric',month:'2-digit',day:'2-digit'}).format(date);
+    function renderHomeDate(now=new Date()){
+      const date=$('#homeDate');
+      date.dateTime=berlinDateKey(now);
+      date.textContent=new Intl.DateTimeFormat(locale(),{timeZone:'Europe/Berlin',weekday:'long',day:'numeric',month:'long'}).format(now);
+    }
     const berlinTime=(date)=>new Intl.DateTimeFormat('de-DE',{timeZone:'Europe/Berlin',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);
     const visibleSessions=()=>APP_STATE.sessions.filter(session=>session.date>=berlinDateKey()).sort((a,b)=>startDateTime(a)-startDateTime(b));
     const startDateTime=session=>new Date(`${session.date}T${session.time.split(/[–-]/)[0].trim()}:00`);
@@ -533,7 +567,7 @@
     const parseDateInput=value=>{const raw=String(value||'').trim();let iso='';const english=raw.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/),german=raw.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);if(english)iso=`${english[1]}-${english[2].padStart(2,'0')}-${english[3].padStart(2,'0')}`;else if(german)iso=`${german[3]}-${german[2].padStart(2,'0')}-${german[1].padStart(2,'0')}`;if(!iso)return '';const date=calendarDate(iso);return Number.isFinite(date.getTime())&&calendarKey(date)===iso?iso:''};
     const dateInputMarkup=(id,value)=>`<input id="${id}" data-date-entry type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="${APP_STATE.language==='en'?'YYYY/MM/DD':'TT.MM.JJJJ'}" value="${escapeHtml(formatDateInput(value))}">`;
     function bindDateInputs(){$$('[data-date-entry]').forEach(input=>{input.oninput=()=>{const digits=input.value.replace(/\D/g,'').slice(0,8);if(APP_STATE.language==='en')input.value=[digits.slice(0,4),digits.slice(4,6),digits.slice(6,8)].filter(Boolean).join('/');else input.value=[digits.slice(0,2),digits.slice(2,4),digits.slice(4,8)].filter(Boolean).join('.')}})}
-    function applyLanguage(){document.documentElement.lang=APP_STATE.language;$$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));$$('[data-i18n-html]').forEach(el=>el.innerHTML=t(el.dataset.i18nHtml));renderWeather();$('#languageValue').textContent=APP_STATE.language==='en'?'English':'Deutsch';$('nav').setAttribute('aria-label',APP_STATE.language==='en'?'Main navigation':'Hauptnavigation');$('#avatarEdit').setAttribute('aria-label',APP_STATE.language==='en'?'Change profile photo':'Profilfoto ändern');}
+    function applyLanguage(){document.documentElement.lang=APP_STATE.language;$$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));$$('[data-i18n-html]').forEach(el=>el.innerHTML=t(el.dataset.i18nHtml));renderHomeDate();renderWeather();$('#languageValue').textContent=APP_STATE.language==='en'?'English':'Deutsch';$('nav').setAttribute('aria-label',APP_STATE.language==='en'?'Main navigation':'Hauptnavigation');$('#avatarEdit').setAttribute('aria-label',APP_STATE.language==='en'?'Change profile photo':'Profilfoto ändern');}
     function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}
     function nav(name){APP_STATE.currentScreen=name;$$('.screen').forEach(x=>x.classList.toggle('active',x.id===`screen-${name}`));$$('.navitem[data-screen]').forEach(x=>x.classList.toggle('active',x.dataset.screen===name));const training=name==='training';$('#appHeader').classList.toggle('hidden',!training);$('#nextCard').classList.toggle('hidden',!training||!nextSession());if(name==='games')loadGames(true);if(name==='statistics')loadGames(true).then(()=>loadStatistics(true));if(name==='profile')refreshApprovalBadge();(ANDROID_STANDALONE?$('#app'):window).scrollTo({top:0,behavior:'smooth'})}
     function setRole(role, displayName){APP_STATE.role=role;const app=$("#app");app.className=`app role-${role}`;const labels={player:[displayName||(APP_STATE.language==='en'?"Player":"Spieler/in"),APP_STATE.language==='en'?"Player · U10-3":"Spieler/in · U10-3"],parent:[displayName||(APP_STATE.language==='en'?"Parent account":"Elternkonto"),APP_STATE.language==='en'?"Parent account · U10-3":"Elternkonto · U10-3"],trainer:[displayName||(APP_STATE.language==='en'?"Coach":"Trainer/in"),APP_STATE.language==='en'?"Coach · U10-3":"Trainer/in · U10-3"],admin:[displayName||"Admin",APP_STATE.language==='en'?"Administration":"Administration"]};const label=labels[role]||labels.parent;APP_STATE.accountName=label[0];$("#greetingName").textContent=label[0].split(' ')[0];$("#profileRole").textContent=label[1];updateQuickAction();$("#loginOverlay").classList.add('hidden');render();toast(APP_STATE.language==='en'?`Signed in as ${label[1]}`:`Angemeldet als ${label[1]}`)}
@@ -1396,9 +1430,9 @@
       if(AUTH_LINK_TYPE==='invite'||AUTH_LINK_TYPE==='recovery'){showInitialPasswordSetup();return}
       await loadAuthenticatedUser();
     }
-    setInterval(()=>{const today=berlinDateKey();if(today!==APP_STATE.currentDay){APP_STATE.currentDay=today;loadTrainings(true)}else if(db&&APP_STATE.userId)loadTrainings(true)},30000);
+    setInterval(()=>{const today=berlinDateKey();if(today!==APP_STATE.currentDay){APP_STATE.currentDay=today;renderHomeDate();loadTrainings(true)}else if(db&&APP_STATE.userId)loadTrainings(true)},30000);
     window.addEventListener('online',queueGamesSync);
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')queueGamesSync()});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){renderHomeDate();queueGamesSync()}});
     setInterval(()=>{if(db&&APP_STATE.userId&&['games','statistics'].includes(APP_STATE.currentScreen)){loadGames(true,{quiet:true}).then(()=>{if(APP_STATE.currentScreen==='statistics')loadStatistics(true)})}},300000);
     setInterval(refreshGameCountdowns,1000);
     setInterval(()=>loadWeather(true),15*60*1000);
