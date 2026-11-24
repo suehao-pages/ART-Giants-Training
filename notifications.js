@@ -309,7 +309,7 @@ function bindPushWheel(node,format,onChange=()=>{}) {
     return select(Math.max(0,values.indexOf(value)),true);
   }};
 }
-function bindTrainingPushLead(selected,categoryOn) {
+function bindPushReminderLead(selected,categoryOn) {
   const picker=$('#pushReminderPicker'), toggle=$('#pushReminderToggle');
   let enabled=selected>0 && categoryOn;
   let hours=Math.floor((selected||15)/60),minutes=(selected||15)%60;
@@ -350,28 +350,22 @@ function openPushReminder(kind,id) {
   const known=Number.isFinite(target) && (!isGame || gameMeeting(event) || gameClock(event.starts_at)!=='00:00');
   const waiting=isGame?event.registration_open!==true:event.status!=='confirmed';
   const back=()=>isGame?openGameDetails(id):closeModal();
-  const label=minutes=>minutes===0?pushText('Aus','Off'):
-    minutes<60?pushText(minutes+' Min. vorher',minutes+' min before'):
-      pushText(Math.floor(minutes/60)+' Std.'+(minutes%60?' '+minutes%60+' Min.':'')+' vorher',
-        Math.floor(minutes/60)+' hr'+(minutes%60?' '+minutes%60+' min':'')+' before');
-  const reference=isGame ? (gameMeeting(event)?pushText('vor der Treffzeit','before the meeting time'):pushText('vor der Treffzeit oder dem Spielbeginn','before the meeting time or tip-off'))
-    :pushText('vor Trainingsbeginn','before practice starts');
-  const title='<h2>'+pushText('Erinnerung','Reminder')+'</h2>';
-  const reminderHeader=isGame?title+'<p>'+pushText('Du erhältst eine Nachricht ','You will get a notification ')+reference+'.</p>'
-    :'<div class="push-reminder-head">'+title+'<button class="push-reminder-toggle" id="pushReminderToggle" type="button" role="switch" aria-label="'+pushText('Trainingserinnerung','Practice reminder')+'" aria-controls="pushReminderPicker"></button></div>';
-  const leadPicker=isGame?'<div class="field"><label for="pushLead">'+pushText('Wie lange vorher?','How far in advance?')+'</label><select id="pushLead">'
-    +PUSH_LEAD_CHOICES.map(minutes=>'<option value="'+minutes+'"'+(selected===minutes?' selected':'')+'>'+escapeHtml(label(minutes))+'</option>').join('')+'</select></div>'
-    :'<section class="push-reminder-picker" id="pushReminderPicker" aria-labelledby="pushReminderBefore" hidden>'
+  const switchLabel=isGame?pushText('Spielerinnerung','Game reminder'):pushText('Trainingserinnerung','Practice reminder');
+  const reminderHeader='<div class="push-reminder-head"><h2>'+pushText('Erinnerung','Reminder')+'</h2>'
+    +'<button class="push-reminder-toggle" id="pushReminderToggle" type="button" role="switch" aria-label="'+switchLabel+'" aria-controls="pushReminderPicker"></button></div>';
+  const gameTimingNote=isGame?'<p>'+(gameMeeting(event)
+    ? pushText('Du erhältst eine Nachricht vor der Treffzeit.','You will get a notification before the meeting time.')
+    : pushText('Du erhältst eine Nachricht vor der Treffzeit oder dem Spielbeginn.','You will get a notification before the meeting time or tip-off.'))+'</p>':'';
+  const leadPicker='<section class="push-reminder-picker" id="pushReminderPicker" aria-labelledby="pushReminderBefore" hidden>'
       +'<h3 class="push-reminder-picker-title" id="pushReminderBefore">'+pushText('Vor','Before')+'</h3>'
       +'<div class="push-wheel-labels" aria-hidden="true"><span>'+pushText('Std.','hr')+'</span><span>'+pushText('Min.','min')+'</span></div>'
       +'<div class="push-wheels"><div class="push-wheel" id="pushReminderHours" tabindex="0" role="spinbutton" aria-label="'+pushText('Stunden','Hours')+'"></div>'
       +'<div class="push-wheel" id="pushReminderMinutes" tabindex="0" role="spinbutton" aria-label="'+pushText('Minuten','Minutes')+'"></div></div></section>';
-  showModal(reminderHeader
+  showModal(reminderHeader+gameTimingNote
     +(!known?'<p>'+pushEndMessage()+'</p>':waiting?'<p>'+pushText('Die Erinnerung wird erst verschickt, wenn der Termin bestätigt ist.','The reminder will only be sent once the event is confirmed.')+'</p>':'')
-    +(isGame&&!categoryOn?'<p class="push-settings-note">'+pushText('Wenn du eine Vorlaufzeit speicherst, schaltest du diese Erinnerungskategorie ein.','Saving a lead time also turns on this reminder category.')+'</p>':'')
     +leadPicker+'<div class="modal-actions"><button class="ghost" id="pushReminderBack" type="button">'+pushText('Zurück','Back')+'</button>'
     +'<button class="primary" id="pushReminderSave" type="button">'+t('save')+'</button></div>');
-  const readMinutes=isGame?()=>Number($('#pushLead').value):bindTrainingPushLead(selected,categoryOn);
+  const readMinutes=bindPushReminderLead(selected,categoryOn);
   $('#pushReminderBack').onclick=back;
   $('#pushReminderSave').onclick=async eventClick=>{
     const button=eventClick.currentTarget, minutes=readMinutes(), user=APP_STATE.userId, state=pushState;

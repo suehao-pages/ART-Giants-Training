@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v85-home-masthead';
+const CACHE_NAME = 'hoopslot-pwa-v84-game-reminders';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
