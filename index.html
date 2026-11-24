@@ -304,23 +304,49 @@
     .push-wheel:before,.push-wheel:after{content:"";display:block;height:var(--push-wheel-row)}
     .push-wheel-option{height:var(--push-wheel-row);display:grid;place-items:center;scroll-snap-align:center;color:var(--muted);font-size:17px;font-weight:550;font-variant-numeric:tabular-nums;cursor:pointer}
     .push-wheel-option.is-selected{color:var(--ink);font-size:21px;font-weight:800}
+    /* Compact home greeting, organization badge, and unboxed weather strip. */
+    .home-masthead{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(114px,36%,142px);align-items:center;gap:clamp(8px,3vw,14px)}
+    .home-greeting{min-width:0;margin:0}
+    .home-greeting-label{display:block;color:#eef5ff;font-size:clamp(12px,3.5vw,14px);font-weight:650;line-height:1.2}
+    .home-greeting-name{display:block;margin-top:2px;color:#fff;font-size:clamp(18px,5.3vw,23px);font-weight:800;line-height:1.13;letter-spacing:-.025em;overflow-wrap:anywhere}
+    .home-organization{--club-crest:clamp(36px,10vw,46px);position:relative;min-width:0;margin-inline-end:calc(var(--club-crest) * .46);padding:7px calc(var(--club-crest) * .62) 7px 8px;border:1px solid rgba(192,219,255,.50);border-radius:11px;background:rgba(156,196,254,.09);line-height:1.15}
+    .home-org-caption{display:block;color:#c4d8f3;font-size:9px;font-weight:650}
+    .home-org-name{display:block;margin-top:2px;color:#fff;font-size:clamp(10px,3.15vw,13px);font-weight:810;white-space:nowrap}
+    .home-org-meta{display:flex;align-items:center;gap:5px;margin-top:3px;color:#dceaff;font-size:10px;font-weight:700;white-space:nowrap}
+    .home-org-chevron{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+    .home-org-crest{position:absolute;inset-block-start:50%;inset-inline-end:calc(var(--club-crest) * -.46);width:var(--club-crest);height:auto;transform:translateY(-50%);filter:drop-shadow(0 3px 7px rgba(0,0,0,.24));pointer-events:none}
+    .home-weather{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.15fr) auto minmax(0,1fr) max-content auto;align-items:center;column-gap:clamp(5px,2.2vw,11px);min-height:48px;margin-top:clamp(11px,3.6vw,16px);padding:0;background:none;border:0;box-shadow:none}
+    .home-weather-place{display:flex;align-items:center;gap:3px;min-width:0;color:#e3efff;font-size:clamp(10px,2.9vw,13px);font-weight:750;line-height:1.2;overflow-wrap:anywhere}
+    .home-weather-place span{min-width:0}
+    .home-weather-pin{width:11px;height:11px;flex:0 0 11px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .home-weather-temp{font-size:clamp(25px,7.4vw,35px);font-weight:750;line-height:1;letter-spacing:-.05em;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .home-weather-condition,.home-weather-range{color:#d8e6fa;font-size:clamp(10px,2.8vw,12px);font-weight:600;line-height:1.25;overflow-wrap:anywhere}
+    .home-weather-range{color:#becfe6;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .home-weather-icon{width:clamp(35px,12vw,53px);aspect-ratio:1;display:grid;place-items:center}
+    .home-weather-icon .weather-symbol{width:100%;height:100%}
   </style>
 </head>
 <body>
   <div class="app role-parent" id="app">
     <header class="top" id="appHeader">
-      <div class="home-hero-grid">
-        <div class="home-identity">
-          <div class="home-brand"><img class="home-hoopslot" src="./assets/hoopslot-logo-white.png" alt="HoopSlot"></div>
-          <div class="home-context">
-            <div class="eyebrow"><span data-i18n="greeting">Guten Tag</span>, <span id="greetingName">Leonie</span></div>
-            <div class="home-teamline"><img class="home-crest" src="./assets/art-giants-logo.png" alt="ART Giants Düsseldorf"><span class="home-teamcopy"><span class="home-team-label" data-i18n="welcomeTo">Willkommen bei</span><span class="home-team-meta"><span class="home-teamname">ART Giants</span><span class="home-teamseason">U10-3</span></span></span></div>
-          </div>
+      <div class="home-masthead">
+        <div class="home-greeting">
+          <span class="home-greeting-label"><span data-i18n="greeting">Guten Tag</span>,</span>
+          <strong class="home-greeting-name" id="greetingName"></strong>
         </div>
-        <div class="weather-hero" id="weatherHero" aria-live="polite">
-          <div class="weather-icon-wrap" id="weatherIcon" aria-hidden="true"></div>
-          <div class="weather-copy"><div class="weather-main"><strong class="weather-temp" id="weatherTemp">--°</strong><span class="weather-condition" id="weatherCondition">Wetter wird geladen…</span></div><span class="weather-range" id="weatherRange">H: –° · T: –°</span><span class="weather-city" id="weatherCity">Düsseldorf</span></div>
+        <div class="home-organization">
+          <span class="home-org-caption" data-i18n="welcomeTo">Willkommen bei</span>
+          <strong class="home-org-name">ART Giants</strong>
+          <span class="home-org-meta">U10-3 <svg class="home-org-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></span>
+          <img class="home-org-crest" src="./assets/art-giants-logo.png" alt="">
         </div>
+      </div>
+      <div class="home-weather" id="weatherHero" aria-live="polite">
+        <div class="home-weather-place"><svg class="home-weather-pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 10-7 10S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.1"/></svg><span id="weatherCity">Düsseldorf</span></div>
+        <strong class="home-weather-temp" id="weatherTemp">--°</strong>
+        <span class="home-weather-condition" id="weatherCondition">Wetter wird geladen…</span>
+        <span class="home-weather-range" id="weatherRange">H: –° · T: –°</span>
+        <div class="home-weather-icon" id="weatherIcon" aria-hidden="true"></div>
       </div>
     </header>
 

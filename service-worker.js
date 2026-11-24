@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v84-game-reminders';
+const CACHE_NAME = 'hoopslot-pwa-v86-home-weather-strip';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
