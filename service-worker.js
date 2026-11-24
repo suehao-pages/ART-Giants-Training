@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v89-home-weather-layout';
+const CACHE_NAME = 'hoopslot-pwa-v90-home-weather-inline-icon';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
