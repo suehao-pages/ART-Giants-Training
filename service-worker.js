@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hoopslot-pwa-v86-home-weather-strip';
+const CACHE_NAME = 'hoopslot-pwa-v87-aligned-home-masthead';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
