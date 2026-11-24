@@ -1,15 +1,13 @@
 'use strict';
 
 // Called from the existing Hoopslot app after the shared app state has been initialized.
-const PUSH_CATEGORIES = {
-  training_open: ['Training: Anmeldung geöffnet', 'Practice: Registration open'],
-  game_open: ['Spiel: Anmeldung geöffnet', 'Game: Registration open'],
-  training_change: ['Training: Zeit oder Ort geändert', 'Practice: Time or location changed'],
-  game_change: ['Spiel: Treffzeit oder Ort geändert', 'Game: Meeting time or location changed'],
-  training_reminder: ['Erinnerungen vor dem Training', 'Practice reminders'],
-  game_reminder: ['Erinnerungen vor dem Spiel', 'Game reminders'],
-};
-const PUSH_CATEGORY_KEYS = Object.keys(PUSH_CATEGORIES);
+const PUSH_CATEGORY_GROUPS = [['training','Training','Practice'],['game','Spiel','Game']];
+const PUSH_CATEGORY_ROWS = [
+  ['open','Anmeldung','Registration'],
+  ['change','Zeit-/Ortsänderungen','Time/location changes'],
+  ['reminder','Erinnerungen','Reminders'],
+];
+const PUSH_CATEGORY_KEYS = PUSH_CATEGORY_GROUPS.flatMap(([kind])=>PUSH_CATEGORY_ROWS.map(([suffix])=>kind+'_'+suffix));
 const PUSH_BELL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12a2 2 0 0 0 4 0"/></svg>';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const PUSH_UUID = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
@@ -91,8 +89,7 @@ function pushDeviceStatus() {
     ? pushText('Füge Hoopslot zum Home-Bildschirm hinzu und öffne es dort.','Add Hoopslot to your Home Screen and open it from there.')
     : pushText('Dieser Browser unterstützt keine Push-Benachrichtigungen.','This browser does not support push notifications.');
   if (Notification.permission==='denied') return pushText('Erlaube Benachrichtigungen zuerst in den Browser- oder Systemeinstellungen.','Allow notifications in your browser or system settings first.');
-  if (pushState.subscribed) return pushText('Push ist auf diesem Gerät aktiviert.','Push is active on this device.');
-  return pushText('Erlaube Push, um Benachrichtigungen auch bei geschlossener App zu erhalten.','Allow push to receive notifications even when Hoopslot is closed.');
+  return pushText('Benachrichtigungen konnten nicht aktiviert werden.','Notifications could not be enabled.');
 }
 function pushApplicationKey(key) {
   return Uint8Array.from(atob(key.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-key.length%4)%4)), c=>c.charCodeAt(0));
@@ -175,24 +172,32 @@ async function disconnectPushDevice() {
     new Promise(resolve=>setTimeout(resolve,2700)),
   ]);
 }
-function pushSwitch(label,active,action) {
-  return '<button type="button" class="push-toggle" data-push-toggle="'+action+'" role="switch" aria-checked="'+active+'">'
-    +'<span>'+escapeHtml(label)+'</span>'
+function pushSwitch(label,active,action,groupId) {
+  const labelId = 'push-label-'+action;
+  return '<button type="button" class="push-toggle" data-push-toggle="'+action+'" role="switch" aria-checked="'+active+'"'
+    +(groupId?' aria-labelledby="'+groupId+' '+labelId+'"':'')+'>'
+    +'<span id="'+labelId+'">'+escapeHtml(label)+'</span>'
     +'<span class="status-switch '+(active?'on':'off')+'" aria-hidden="true"><span>'+(active?'ON':'OFF')+'</span><i></i></span></button>';
+}
+function pushCategoryGroup([kind,de,en]) {
+  const headingId = 'push-group-'+kind;
+  return '<section class="push-category-group" aria-labelledby="'+headingId+'"><h3 id="'+headingId+'">'+pushText(de,en)+'</h3>'
+    +PUSH_CATEGORY_ROWS.map(([suffix,deLabel,enLabel])=>{
+      const key = kind+'_'+suffix;
+      return pushSwitch(pushText(deLabel,enLabel),pushState.categories.includes(key),key,headingId);
+    }).join('')+'</section>';
 }
 function renderPushSettings() {
   const all = PUSH_CATEGORY_KEYS.every(key=>pushState.categories.includes(key));
   const subtitle = all ? pushText('Alle aktiv','All on') : pushState.categories.length
     ? pushText(pushState.categories.length+' von 6 aktiv',pushState.categories.length+' of 6 on') : pushText('Alle aus','All off');
   const connect = pushSupports() && pushState.key && !pushState.subscribed && Notification.permission!=='denied';
-  showModal('<div id="pushPrefsDialog"><h2>'+pushTitle()+'</h2><p>'+escapeHtml(pushDeviceStatus())+'</p>'
+  showModal('<div id="pushPrefsDialog"><h2>'+pushTitle()+'</h2>'
     +(connect?'<button class="secondary full push-device-connect" type="button" id="pushConnect">'+pushText('Auf diesem Gerät aktivieren','Enable on this device')+'</button>':'')
     +pushSwitch(pushText('Alle Benachrichtigungen','All notifications'),all,'all')
     +'<div class="push-all-hint">'+escapeHtml(subtitle)+(pushState.categories.length && !all
       ? '<button id="pushAllOff" type="button">'+pushText('Alle ausschalten','Turn all off')+'</button>':'')+'</div>'
-    +'<hr class="push-divider">'
-    +PUSH_CATEGORY_KEYS.map(key=>pushSwitch(PUSH_CATEGORIES[key][APP_STATE.language==='en'?1:0],pushState.categories.includes(key),key)).join('')
-    +'<p class="push-settings-note">'+pushText('Stelle einzelne Erinnerungen über die Glocke in den Trainings- oder Spieldetails ein.','Set individual reminders with the bell in the practice or game details.')+'</p>'
+    +PUSH_CATEGORY_GROUPS.map(group=>'<hr class="push-divider">'+pushCategoryGroup(group)).join('')
     +'<div class="modal-actions"><button class="ghost" type="button" onclick="closeModal()">'+t('close')+'</button></div></div>');
   function update(next) {
     if (pushState.busy) return;

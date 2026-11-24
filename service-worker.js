@@ -1,9 +1,9 @@
-const CACHE_NAME = 'hoopslot-pwa-v81-notifications';
+const CACHE_NAME = 'hoopslot-pwa-v82-notification-settings';
 const PUSH_DEVICE_CACHE = 'hoopslot-push-device-v1';
 const APP_SHELL = [
   './',
   './index.html',
-  './notifications.js',
+  './notifications.js?v=82',
   './manifest.webmanifest',
   './assets/hoopslot-app-icon-32.png',
   './assets/art-giants-logo.png',
