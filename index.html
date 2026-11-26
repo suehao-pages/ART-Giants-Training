@@ -890,7 +890,8 @@
         return;
       }
       const previousGames=APP_STATE.games;
-      const syncedGames=gamesResult.data||[],syncedKeys=new Set(syncedGames.map(game=>[game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|'))),playoffFallback=DEMO_GAMES.filter(game=>game.season_phase==='playoffs'&&!syncedKeys.has([game.starts_at?.slice(0,10),game.home_team,game.away_team].join('|')));APP_STATE.games=[...syncedGames,...playoffFallback];APP_STATE.gameRsvps=rsvpResult.data||[];APP_STATE.standings=standingsResult.data||[];APP_STATE.gameAttendees=attendeesResult.error?[]:(attendeesResult.data||[]);APP_STATE.gamesLoaded=true;renderGames();
+      // Successful sync is authoritative; static demo fixtures belong only to no-database mode.
+      APP_STATE.games=gamesResult.data||[];APP_STATE.gameRsvps=rsvpResult.data||[];APP_STATE.standings=standingsResult.data||[];APP_STATE.gameAttendees=attendeesResult.error?[]:(attendeesResult.data||[]);APP_STATE.gamesLoaded=true;renderGames();
       refreshOpenGameDetails(previousGames);
       if(APP_STATE.currentScreen==='training')renderCalendar();
     }
